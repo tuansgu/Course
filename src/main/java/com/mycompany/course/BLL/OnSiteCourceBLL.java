@@ -4,10 +4,20 @@
  */
 package com.mycompany.course.BLL;
 
+import com.mycompany.course.DAL.OnSiteCourseDAL;
+import com.mycompany.course.DTO.CourseDTO;
+import com.mycompany.course.DTO.OnSiteCourseDTO;
+
 /**
  *
  * @author pc
  */
 public class OnSiteCourceBLL {
-    
+    OnSiteCourseDAL dal=new OnSiteCourseDAL();
+     public int insertCourse(OnSiteCourseDTO dto){
+        if(dal.insertCourseOnsite(dto)>0){
+            return 1;
+        }
+        return -1;
+    }
 }

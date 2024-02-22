@@ -6,17 +6,26 @@
     <version>1.0-SNAPSHOT</version>
     <packaging>jar</packaging>
     <properties>
+      
+   
+
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <maven.compiler.source>21</maven.compiler.source>
         <maven.compiler.target>21</maven.compiler.target>
         <exec.mainClass>com.mycompany.course.Course</exec.mainClass>
     </properties>
+   
     <dependencies>
         <!-- Đặt <dependency> trong <dependencies> -->
         <dependency>
             <groupId>mysql</groupId>
             <artifactId>mysql-connector-java</artifactId>
             <version>8.0.26</version>
+        </dependency>
+        <dependency>
+            <groupId>com.toedter</groupId>
+            <artifactId>jcalendar</artifactId>
+            <version>1.4</version>
         </dependency>
     </dependencies>
 </project>
