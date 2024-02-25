@@ -12,7 +12,7 @@ import com.mycompany.course.DTO.OnLineCourseDTO;
  *
  * @author pc
  */
-public class OnLineSourceBLL {
+public class OnLineCourseBLL {
      OnLineCourseDAL dal=new OnLineCourseDAL();
      public int insertCourseOnline(OnLineCourseDTO dto){
         if(dal.insertCourseOnline(dto)>0){

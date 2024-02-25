@@ -16,7 +16,7 @@ public class OnSiteCourseDAL {
         Connection con = null;
         try {
             con = MyConnection.connect();
-            String sql = "INSERT INTO onlinecourse (CourseID, Location,Days,Time) VALUES (?, ?,?,?)";
+            String sql = "INSERT INTO onsitecourse (CourseID, Location,Days,Time) VALUES (?,?,?,?)";
             PreparedStatement st = con.prepareStatement(sql);
             st.setInt(1, dto.getCourseID());
             st.setString(2, dto.getLocation());

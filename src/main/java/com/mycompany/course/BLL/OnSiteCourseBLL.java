@@ -12,9 +12,9 @@ import com.mycompany.course.DTO.OnSiteCourseDTO;
  *
  * @author pc
  */
-public class OnSiteCourceBLL {
+public class OnSiteCourseBLL {
     OnSiteCourseDAL dal=new OnSiteCourseDAL();
-     public int insertCourse(OnSiteCourseDTO dto){
+     public int insertCourseOnSite(OnSiteCourseDTO dto){
         if(dal.insertCourseOnsite(dto)>0){
             return 1;
         }

@@ -8,6 +8,8 @@ package com.mycompany.course.GUI;
 import com.mycompany.course.BLL.CourseBLL;
 import com.mycompany.course.DTO.CourseDTO;
 import java.awt.Color;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.util.ArrayList;
 import java.util.Vector;
 import javax.swing.JMenuItem;
@@ -30,6 +32,9 @@ public class HomeGUI extends javax.swing.JFrame {
     private DefaultTableModel tableModel;
     CourseBLL course = new CourseBLL();
     JPopupMenu popupMenu = new JPopupMenu();
+    JMenuItem editMenuItem;
+    JMenuItem deleteMenuItem;
+    JMenuItem viewDetailsMenuItem;
 
     public HomeGUI() {
 
@@ -37,15 +42,29 @@ public class HomeGUI extends javax.swing.JFrame {
         this.setLocationRelativeTo(null);
         tableModel = (DefaultTableModel) jTable1.getModel();
 
-        JMenuItem editMenuItem = new JMenuItem("Edit");
-        JMenuItem deleteMenuItem = new JMenuItem("Delete");
-        JMenuItem viewDetailsMenuItem = new JMenuItem("View Details");
+        editMenuItem = new JMenuItem("Edit");
+        deleteMenuItem = new JMenuItem("Delete");
+        viewDetailsMenuItem = new JMenuItem("View Details");
 
         popupMenu.add(editMenuItem);
         popupMenu.add(deleteMenuItem);
         popupMenu.add(viewDetailsMenuItem);
 
         loadCourse();
+        
+        editMenuItem.addActionListener(new ActionListener(){
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                int selectedRow=jTable1.getSelectedRow();
+                if(selectedRow!=-1){
+                    EditCourseOnlieDig editOnline=new EditCourseOnlieDig(new HomeGUI(), true);
+                    editOnline.setVisible(true);
+                    
+                    EditCourseSiteDig editOnsite =new EditCourseSiteDig(new HomeGUI(), true);
+                    editOnsite.setVisible(true);
+                }
+            }
+        });
     }
 
     public void loadCourse() {
@@ -96,7 +115,7 @@ public class HomeGUI extends javax.swing.JFrame {
         vec.add(course.getDepartmentID());
         tableModel.addRow(vec);
     }
-
+    
     /**
      * This method is called from within the constructor to initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is always
@@ -114,6 +133,9 @@ public class HomeGUI extends javax.swing.JFrame {
         jPanel7 = new javax.swing.JPanel();
         jScrollPane1 = new javax.swing.JScrollPane();
         jTable1 = new javax.swing.JTable();
+        jLabel2 = new javax.swing.JLabel();
+        jButton2 = new javax.swing.JButton();
+        jButton3 = new javax.swing.JButton();
         jComboBox1 = new javax.swing.JComboBox<>();
         jLabel1 = new javax.swing.JLabel();
         jPanel2 = new javax.swing.JPanel();
@@ -153,17 +175,35 @@ public class HomeGUI extends javax.swing.JFrame {
         });
         jScrollPane1.setViewportView(jTable1);
 
+        jLabel2.setText("1/10");
+
+        jButton2.setText(">");
+
+        jButton3.setText("<");
+
         javax.swing.GroupLayout jPanel7Layout = new javax.swing.GroupLayout(jPanel7);
         jPanel7.setLayout(jPanel7Layout);
         jPanel7Layout.setHorizontalGroup(
             jPanel7Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addComponent(jScrollPane1, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 1109, Short.MAX_VALUE)
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel7Layout.createSequentialGroup()
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addComponent(jButton3)
+                .addGap(18, 18, 18)
+                .addComponent(jLabel2, javax.swing.GroupLayout.PREFERRED_SIZE, 31, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(jButton2)
+                .addContainerGap())
         );
         jPanel7Layout.setVerticalGroup(
             jPanel7Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel7Layout.createSequentialGroup()
-                .addContainerGap()
-                .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 524, Short.MAX_VALUE)
+                .addGroup(jPanel7Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                    .addComponent(jButton2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(jLabel2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(jButton3, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 519, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap())
         );
 
@@ -219,7 +259,7 @@ public class HomeGUI extends javax.swing.JFrame {
         );
         jPanel2Layout.setVerticalGroup(
             jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 625, Short.MAX_VALUE)
+            .addGap(0, 648, Short.MAX_VALUE)
         );
 
         jTabbedPane1.addTab("Phân công giảng dạy", jPanel2);
@@ -232,7 +272,7 @@ public class HomeGUI extends javax.swing.JFrame {
         );
         jPanel3Layout.setVerticalGroup(
             jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 625, Short.MAX_VALUE)
+            .addGap(0, 648, Short.MAX_VALUE)
         );
 
         jTabbedPane1.addTab("Kết quả khóa học", jPanel3);
@@ -317,9 +357,12 @@ public class HomeGUI extends javax.swing.JFrame {
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JButton jButton2;
+    private javax.swing.JButton jButton3;
     private javax.swing.JButton jButton5;
     private javax.swing.JComboBox<String> jComboBox1;
     private javax.swing.JLabel jLabel1;
+    private javax.swing.JLabel jLabel2;
     private javax.swing.JOptionPane jOptionPane1;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanel2;

@@ -48,7 +48,7 @@ public class CourseDAL {
         try {
             con = MyConnection.connect();
             String sql = "INSERT INTO Course (CourseID,Title,Credits,DepartmentID)"
-                    + "VALUES (?,?,?,?,?)";
+                    + "VALUES (?,?,?,?)";
             PreparedStatement st = con.prepareStatement(sql);
              st.setInt(1, dto.getCourseID());
             st.setString(2, dto.getTitle());

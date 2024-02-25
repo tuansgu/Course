@@ -18,7 +18,7 @@ import javax.swing.JOptionPane;
  *
  * @author ACER
  */
-public class AddCourseOnlieDig extends javax.swing.JDialog {
+public class EditCourseOnlieDig extends javax.swing.JDialog {
 
     /**
      * Creates new form NewJDialog
@@ -26,7 +26,7 @@ public class AddCourseOnlieDig extends javax.swing.JDialog {
     CourseBLL courseBLL = new CourseBLL();
     OnLineCourseBLL onlineCourseBLL = new OnLineCourseBLL();
 
-    public AddCourseOnlieDig(java.awt.Frame parent, boolean modal) {
+    public EditCourseOnlieDig(java.awt.Frame parent, boolean modal) {
         super(parent, modal);
         initComponents();
         this.setLocationRelativeTo(null);
@@ -219,14 +219,18 @@ public class AddCourseOnlieDig extends javax.swing.JDialog {
                 }
             }
         } catch (ClassNotFoundException ex) {
-            java.util.logging.Logger.getLogger(AddCourseOnlieDig.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(EditCourseOnlieDig.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         } catch (InstantiationException ex) {
-            java.util.logging.Logger.getLogger(AddCourseOnlieDig.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(EditCourseOnlieDig.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         } catch (IllegalAccessException ex) {
-            java.util.logging.Logger.getLogger(AddCourseOnlieDig.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(EditCourseOnlieDig.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         } catch (javax.swing.UnsupportedLookAndFeelException ex) {
-            java.util.logging.Logger.getLogger(AddCourseOnlieDig.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(EditCourseOnlieDig.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         }
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
         //</editor-fold>
         //</editor-fold>
         //</editor-fold>
@@ -235,7 +239,7 @@ public class AddCourseOnlieDig extends javax.swing.JDialog {
         /* Create and display the dialog */
         java.awt.EventQueue.invokeLater(new Runnable() {
             public void run() {
-                AddCourseOnlieDig dialog = new AddCourseOnlieDig(new javax.swing.JFrame(), true);
+                EditCourseOnlieDig dialog = new EditCourseOnlieDig(new javax.swing.JFrame(), true);
                 dialog.addWindowListener(new java.awt.event.WindowAdapter() {
                     @Override
                     public void windowClosing(java.awt.event.WindowEvent e) {
