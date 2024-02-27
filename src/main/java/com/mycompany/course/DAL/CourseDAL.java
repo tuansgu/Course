@@ -5,9 +5,12 @@
 package com.mycompany.course.DAL;
 
 import com.mycompany.course.DTO.CourseDTO;
+import com.mycompany.course.DTO.OnLineCourseDTO;
+import com.mycompany.course.DTO.OnSiteCourseDTO;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
+import java.sql.Time;
 import java.util.ArrayList;
 
 /**
@@ -15,6 +18,7 @@ import java.util.ArrayList;
  * @author pc
  */
 public class CourseDAL {
+
     MyConnection data = new MyConnection();
 
     public ArrayList<CourseDTO> getAllCourse() {
@@ -22,15 +26,31 @@ public class CourseDAL {
         Connection conn = null;
         try {
             conn = MyConnection.connect();
-            String sql = "SELECT * FROM Course";
+            String sql = "SELECT * FROM Course \n"
+                    + "LEFT JOIN onsitecourse ON course.CourseID = onsitecourse.CourseID\n"
+                    + "LEFT JOIN onlinecourse ON course.CourseID = onlinecourse.CourseID";
             PreparedStatement st = conn.prepareStatement(sql);
             ResultSet rs = st.executeQuery();
             while (rs.next()) {
-                CourseDTO dto = new CourseDTO();
-                dto.setCourseID(rs.getInt("CourseID"));
-                dto.setTitle(rs.getString("Title"));
-                dto.setCredits(rs.getInt("Credits"));
-                dto.setDepartmentID(rs.getInt("DepartmentID"));
+                CourseDTO dto;
+                if (rs.getString("url") != null) {
+                    int CourseID = rs.getInt("CourseID");
+                    String Title = rs.getString("Title");
+                    int Credits = rs.getInt("Credits");
+                    int DepartmentId = rs.getInt("DepartmentId");
+                    String url = rs.getString("url");
+                    dto = new OnLineCourseDTO(CourseID, Title, Credits, DepartmentId, url);
+                } else {
+                    int CourseID = rs.getInt("CourseID");
+                    String Title = rs.getString("Title");
+                    int Credits = rs.getInt("Credits");
+                    int DepartmentId = rs.getInt("DepartmentId");
+                    String Location = rs.getString("Location");
+                    String Days = rs.getString("Days");
+                    Time time = rs.getTime("Time");
+                    dto = new OnSiteCourseDTO(CourseID, Title, Credits, DepartmentId, Location, Days, time);
+                }
+
                 list.add(dto);
             }
 
@@ -41,41 +61,19 @@ public class CourseDAL {
         }
         return list;
     }
-    
-    public int insertCourse(CourseDTO dto) {
-        int result = -1;
+
+    public boolean updateCourse(CourseDTO dto) {
+        boolean result = false;
         Connection con = null;
         try {
             con = MyConnection.connect();
-            String sql = "INSERT INTO Course (CourseID,Title,Credits,DepartmentID)"
-                    + "VALUES (?,?,?,?)";
-            PreparedStatement st = con.prepareStatement(sql);
-             st.setInt(1, dto.getCourseID());
-            st.setString(2, dto.getTitle());
-            st.setInt(3, dto.getCredits());
-            st.setInt(4, dto.getDepartmentID());
-            result = st.executeUpdate();
-
-        } catch (Exception e) {
-            e.printStackTrace();
-        } finally {
-            MyConnection.close(con);
-        }
-        return result;
-    }
-
-    public int updateCourse(CourseDTO dto) {
-        int result = -1;
-        Connection con = null;
-        try {
-            con = MyConnection.connect();
-            String sql = "UPDATE Course SET Title=?,Credits=?,DepartmentID=? WHERE CourseID=? ";
+            String sql = "UPDATE course SET Title=?,Credits=?,DepartmentID=? WHERE CourseID=? ";
             PreparedStatement st = con.prepareStatement(sql);
             st.setString(1, dto.getTitle());
             st.setInt(2, dto.getCredits());
             st.setInt(3, dto.getDepartmentID());
             st.setInt(4, dto.getCourseID());
-            result = st.executeUpdate();
+            result = st.execute();
 
         } catch (Exception e) {
             e.printStackTrace();
@@ -101,6 +99,7 @@ public class CourseDAL {
         }
         return result;
     }
+
     public CourseDTO findCourseByID(int courseID) {
         CourseDTO course = null;
         Connection con = null;
@@ -148,5 +147,94 @@ public class CourseDAL {
             MyConnection.close(con);
         }
         return courses;
+    }
+
+    public ArrayList<CourseDTO> getCourseByID(int id) {
+        ArrayList<CourseDTO> list = new ArrayList<>();
+        Connection conn = null;
+        try {
+            conn = MyConnection.connect();
+            String sql = "SELECT * FROM Course \n"
+                    + "LEFT JOIN onsitecourse ON course.CourseID = onsitecourse.CourseID\n"
+                    + "LEFT JOIN onlinecourse ON course.CourseID = onlinecourse.CourseID\n"
+                    + "Where course.CourseID=?";
+            PreparedStatement st = conn.prepareStatement(sql);
+            st.setInt(1, id);
+            ResultSet rs = st.executeQuery();
+            while (rs.next()) {
+                CourseDTO dto;
+                if (rs.getString("url") != null) {
+                    int CourseID = rs.getInt("CourseID");
+                    String Title = rs.getString("Title");
+                    int Credits = rs.getInt("Credits");
+                    int DepartmentId = rs.getInt("DepartmentId");
+                    String url = rs.getString("url");
+                    dto = new OnLineCourseDTO(CourseID, Title, Credits, DepartmentId, url);
+                } else {
+                    int CourseID = rs.getInt("CourseID");
+                    String Title = rs.getString("Title");
+                    int Credits = rs.getInt("Credits");
+                    int DepartmentId = rs.getInt("DepartmentId");
+                    String Location = rs.getString("Location");
+                    String Days = rs.getString("Days");
+                    Time time = rs.getTime("Time");
+                    dto = new OnSiteCourseDTO(CourseID, Title, Credits, DepartmentId, Location, Days, time);
+                }
+
+                list.add(dto);
+            }
+
+        } catch (Exception e) {
+            return null;
+        } finally {
+            MyConnection.close(conn);
+        }
+        return list;
+    }
+
+    // lấy ra khóa học không được phân công 
+    // dựa vào id
+    public CourseDTO getCourseNotInstructorByID(int id) {
+        
+        Connection conn = null;
+        try {
+            conn = MyConnection.connect();
+            String sql = "SELECT * FROM course\n"
+                    + "LEFT JOIN onsitecourse ON course.CourseID = onsitecourse.CourseID\n"
+                    + "LEFT JOIN onlinecourse ON course.CourseID = onlinecourse.CourseID\n"
+                    + "LEFT JOIN courseinstructor ON courseinstructor.CourseID=course.CourseID\n"
+                    + "WHERE course.CourseID=? AND courseinstructor.CourseID IS null";
+            PreparedStatement st = conn.prepareStatement(sql);
+            st.setInt(1, id);
+            ResultSet rs = st.executeQuery();
+            while (rs.next()) {
+                CourseDTO dto;
+                if (rs.getString("url") != null) {
+                    int CourseID = rs.getInt("CourseID");
+                    String Title = rs.getString("Title");
+                    int Credits = rs.getInt("Credits");
+                    int DepartmentId = rs.getInt("DepartmentId");
+                    String url = rs.getString("url");
+                    dto = new OnLineCourseDTO(CourseID, Title, Credits, DepartmentId, url);
+                } else {
+                    int CourseID = rs.getInt("CourseID");
+                    String Title = rs.getString("Title");
+                    int Credits = rs.getInt("Credits");
+                    int DepartmentId = rs.getInt("DepartmentId");
+                    String Location = rs.getString("Location");
+                    String Days = rs.getString("Days");
+                    Time time = rs.getTime("Time");
+                    dto = new OnSiteCourseDTO(CourseID, Title, Credits, DepartmentId, Location, Days, time);
+                }
+
+                return dto;
+            }
+
+        } catch (Exception e) {
+            return null;
+        } finally {
+            MyConnection.close(conn);
+        }
+        return null;
     }
 }

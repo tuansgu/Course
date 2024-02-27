@@ -87,7 +87,6 @@ public class AddCourseSiteDig extends javax.swing.JDialog {
     }
 
     private void addOnsiteCourse() {
-        int courseID = Integer.parseInt(jTextField4.getText());
         String title = jTextField1.getText().trim();
         if (title.isEmpty()) {
             JOptionPane.showMessageDialog(this, "Title cannot be empty", "Error", JOptionPane.ERROR_MESSAGE);
@@ -107,7 +106,9 @@ public class AddCourseSiteDig extends javax.swing.JDialog {
         }
 
         Date selectedDate = jDateChooser1.getDate();
-
+        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
+        String days = dateFormat.format(selectedDate);
+        
         if (selectedDate == null) {
             JOptionPane.showMessageDialog(this, "Please select a date", "Error", JOptionPane.ERROR_MESSAGE);
             return;
@@ -120,8 +121,6 @@ public class AddCourseSiteDig extends javax.swing.JDialog {
             return;
         }
 
-        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
-        String days = dateFormat.format(selectedDate);
         String location = (String) jComboBox4.getSelectedItem();
         if (location == null || location.equals("0-selected location")) {
             JOptionPane.showMessageDialog(this, "Please select a department", "Error", JOptionPane.ERROR_MESSAGE);
@@ -135,17 +134,15 @@ public class AddCourseSiteDig extends javax.swing.JDialog {
             return;
         }
 
-        CourseDTO courseDTO = new CourseDTO(courseID, title, credit, departmentID);
-        int insertResult = courseBLL.insertCourse(courseDTO);
-        if (insertResult != -1) {
-            OnSiteCourseDTO onsiteCourseDTO = new OnSiteCourseDTO(courseID, location, days, time);
-            int insertResultOnline = onsiteCourseBLL.insertCourseOnSite(onsiteCourseDTO);
-            if (insertResultOnline != -1) {
-                JOptionPane.showMessageDialog(this, "Onsite course added successfully");
-            } else {
-                JOptionPane.showMessageDialog(this, "Failed to add Onsite course", "Error", JOptionPane.ERROR_MESSAGE);
-            }
-        }
+        CourseDTO courseDTO = new CourseDTO();
+        OnSiteCourseDTO onsiteCourseDTO = new OnSiteCourseDTO();
+        onsiteCourseDTO.setTitle(title);
+        onsiteCourseDTO.setCredits(credit);
+        onsiteCourseDTO.setDepartmentID(departmentID);
+        onsiteCourseDTO.setLocation(location);
+        onsiteCourseDTO.setDays(days);
+        onsiteCourseDTO.setTime(time);
+        onsiteCourseBLL.insertCourseOnSite(onsiteCourseDTO);
     }
 
     /**
@@ -174,8 +171,6 @@ public class AddCourseSiteDig extends javax.swing.JDialog {
         jComboBox3 = new javax.swing.JComboBox<>();
         jLabel9 = new javax.swing.JLabel();
         jLabel10 = new javax.swing.JLabel();
-        jLabel11 = new javax.swing.JLabel();
-        jTextField4 = new javax.swing.JTextField();
         jComboBox4 = new javax.swing.JComboBox<>();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
@@ -223,8 +218,6 @@ public class AddCourseSiteDig extends javax.swing.JDialog {
 
         jLabel10.setText("jLabel10");
 
-        jLabel11.setText("CourseID:");
-
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
@@ -237,7 +230,6 @@ public class AddCourseSiteDig extends javax.swing.JDialog {
                             .addComponent(jLabel2, javax.swing.GroupLayout.PREFERRED_SIZE, 41, javax.swing.GroupLayout.PREFERRED_SIZE)
                             .addComponent(jLabel6, javax.swing.GroupLayout.PREFERRED_SIZE, 61, javax.swing.GroupLayout.PREFERRED_SIZE)
                             .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, 41, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(jLabel11)
                             .addComponent(jLabel7, javax.swing.GroupLayout.PREFERRED_SIZE, 44, javax.swing.GroupLayout.PREFERRED_SIZE)
                             .addComponent(jLabel5, javax.swing.GroupLayout.PREFERRED_SIZE, 61, javax.swing.GroupLayout.PREFERRED_SIZE)
                             .addComponent(jLabel3, javax.swing.GroupLayout.PREFERRED_SIZE, 87, javax.swing.GroupLayout.PREFERRED_SIZE))
@@ -246,7 +238,6 @@ public class AddCourseSiteDig extends javax.swing.JDialog {
                             .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                                 .addComponent(jTextField1, javax.swing.GroupLayout.DEFAULT_SIZE, 193, Short.MAX_VALUE)
                                 .addComponent(jTextField2, javax.swing.GroupLayout.DEFAULT_SIZE, 193, Short.MAX_VALUE)
-                                .addComponent(jTextField4)
                                 .addComponent(jDateChooser1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                             .addComponent(jComboBox4, javax.swing.GroupLayout.PREFERRED_SIZE, 193, javax.swing.GroupLayout.PREFERRED_SIZE)
                             .addGroup(layout.createSequentialGroup()
@@ -272,15 +263,11 @@ public class AddCourseSiteDig extends javax.swing.JDialog {
             .addGroup(layout.createSequentialGroup()
                 .addGap(22, 22, 22)
                 .addComponent(jLabel4, javax.swing.GroupLayout.PREFERRED_SIZE, 16, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(14, 14, 14)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jLabel11, javax.swing.GroupLayout.PREFERRED_SIZE, 16, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jTextField4, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(18, 18, 18)
+                .addGap(53, 53, 53)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel1)
                     .addComponent(jTextField1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 18, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 23, Short.MAX_VALUE)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel2)
                     .addComponent(jTextField2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
@@ -384,7 +371,6 @@ public class AddCourseSiteDig extends javax.swing.JDialog {
     private com.toedter.calendar.JDateChooser jDateChooser1;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel10;
-    private javax.swing.JLabel jLabel11;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
     private javax.swing.JLabel jLabel4;
@@ -395,6 +381,5 @@ public class AddCourseSiteDig extends javax.swing.JDialog {
     private javax.swing.JLabel jLabel9;
     private javax.swing.JTextField jTextField1;
     private javax.swing.JTextField jTextField2;
-    private javax.swing.JTextField jTextField4;
     // End of variables declaration//GEN-END:variables
 }

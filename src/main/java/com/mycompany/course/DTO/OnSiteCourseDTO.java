@@ -2,9 +2,8 @@ package com.mycompany.course.DTO;
 
 import java.sql.Time;
 
-public class OnSiteCourseDTO 
+public class OnSiteCourseDTO extends CourseDTO
 {
-    private int courseID;
     private String location;
     private String days;
     private Time Time;
@@ -14,23 +13,15 @@ public class OnSiteCourseDTO
         // none paremeters
     }
 
-    public OnSiteCourseDTO(int courseID, String location, String days, Time Time) 
+    public OnSiteCourseDTO(int courseID, String title, int credits, int departmentID, String location, String days, Time Time) 
     {
-        this.courseID = courseID;
+        super( courseID,  title, credits,  departmentID);
         this.location = location;
         this.days = days;
         this.Time = Time;
     }
     
-    public int getCourseID() 
-    {
-        return courseID;
-    }
-
-    public void setCourseID(int courseID) 
-    {
-        this.courseID = courseID;
-    }
+ 
 
     public String getLocation() 
     {

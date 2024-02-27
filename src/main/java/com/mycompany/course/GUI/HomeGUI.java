@@ -6,7 +6,10 @@
 package com.mycompany.course.GUI;
 
 import com.mycompany.course.BLL.CourseBLL;
+import com.mycompany.course.BLL.OnLineCourseBLL;
 import com.mycompany.course.DTO.CourseDTO;
+import com.mycompany.course.DTO.OnLineCourseDTO;
+import com.mycompany.course.DTO.OnSiteCourseDTO;
 import java.awt.Color;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -51,31 +54,130 @@ public class HomeGUI extends javax.swing.JFrame {
         popupMenu.add(viewDetailsMenuItem);
 
         loadCourse();
-        
-        editMenuItem.addActionListener(new ActionListener(){
+        // edit course
+        editMenuItem.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                int selectedRow=jTable1.getSelectedRow();
-                if(selectedRow!=-1){
-                    EditCourseOnlieDig editOnline=new EditCourseOnlieDig(new HomeGUI(), true);
-                    editOnline.setVisible(true);
-                    
-                    EditCourseSiteDig editOnsite =new EditCourseSiteDig(new HomeGUI(), true);
-                    editOnsite.setVisible(true);
+                int selectedRow = jTable1.getSelectedRow();
+                CourseDTO coursedto;
+                if (selectedRow != -1) {
+                    int courseID = Integer.parseInt(tableModel.getValueAt(selectedRow, 0).toString());
+                    //System.out.println(" get courseId:"+courseID)
+                    coursedto = course.getCourseById(courseID).get(0);
+                    if (coursedto instanceof OnLineCourseDTO) {
+                        EditCourseOnlieDig editOnline = new EditCourseOnlieDig(new HomeGUI(), true);
+                        editOnline.setCourseId(courseID);
+                        editOnline.setCourseOnline(
+                                coursedto.getTitle(),
+                                coursedto.getCredits(),
+                                ((OnLineCourseDTO) coursedto).getUrl(),
+                                coursedto.getDepartmentID()
+                        );
+                        editOnline.setVisible(true);
+                    } else if (coursedto instanceof OnSiteCourseDTO) {
+                        EditCourseSiteDig editOnsite = new EditCourseSiteDig(new HomeGUI(), true);
+                        editOnsite.setCourseOnsite(coursedto.getTitle(),
+                                coursedto.getCredits(),
+                                ((OnSiteCourseDTO) coursedto).getLocation(),
+                                ((OnSiteCourseDTO) coursedto).getDays(),
+                                ((OnSiteCourseDTO) coursedto).getTime(),
+                                coursedto.getDepartmentID());
+                        editOnsite.setVisible(true);
+                    }
+                }
+            }
+        });
+        // view detail
+        viewDetailsMenuItem.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                int selectedRowDetail = jTable1.getSelectedRow();
+                CourseDTO coursedto;
+                if (selectedRowDetail != -1) {
+                    int courseID = Integer.parseInt(tableModel.getValueAt(selectedRowDetail, 0).toString());
+                    coursedto = course.getCourseById(courseID).get(0);
+                    if (coursedto instanceof OnLineCourseDTO) {
+                        DetailCourseOnlieDig detailOnline = new DetailCourseOnlieDig(new HomeGUI(), true);
+                        detailOnline.setCourseOnline(
+                                coursedto.getCourseID(),
+                                coursedto.getTitle(),
+                                coursedto.getCredits(),
+                                ((OnLineCourseDTO) coursedto).getUrl(),
+                                coursedto.getDepartmentID()
+                        );
+                        detailOnline.setVisible(true);
+                    } else if (coursedto instanceof OnSiteCourseDTO) {
+                        DetailCourseSiteDig detailOnsite = new DetailCourseSiteDig(new HomeGUI(), true);
+                        detailOnsite.setCourseOnsite(
+                                coursedto.getCourseID(), 
+                                coursedto.getTitle(), 
+                                coursedto.getCredits(), 
+                                coursedto.getDepartmentID(), 
+                                ((OnSiteCourseDTO) coursedto).getLocation(), 
+                                ((OnSiteCourseDTO) coursedto).getDays(), 
+                                ((OnSiteCourseDTO) coursedto).getTime());
+                                
+                        detailOnsite.setVisible(true);
+                    }
+                }
+            }
+
+        });
+//      // delete Course
+        deleteMenuItem.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                int selectedRowDelete = jTable1.getSelectedRow();
+                CourseDTO coursedto;
+                if (selectedRowDelete != -1) {
+                    int courseID = Integer.parseInt(tableModel.getValueAt(selectedRowDelete, 0).toString());
+                    coursedto = course.getCourseNotInstructorByID(courseID);
+                    if (coursedto instanceof OnLineCourseDTO) {
+                        if (coursedto != null) {
+                            int a = JOptionPane.showConfirmDialog(null, "you definitely want to delete", "delete course", JOptionPane.YES_NO_OPTION);
+                            if (a == JOptionPane.YES_OPTION) {
+                                OnLineCourseBLL onlineBLL = new OnLineCourseBLL();
+                                if (onlineBLL.deleteCourseOnline((OnLineCourseDTO) coursedto) > 0) {
+                                    JOptionPane.showMessageDialog(rootPane, "Delete course succefull");
+                                } else {
+                                    JOptionPane.showMessageDialog(rootPane, "Fail, Delte course fail", "Error", JOptionPane.ERROR_MESSAGE);
+                                }
+                            }
+                        } else {
+                            JOptionPane.showMessageDialog(rootPane, "Fail, This course can't be delete", "Error", JOptionPane.ERROR_MESSAGE);
+                        }
+                    } else if (coursedto instanceof OnSiteCourseDTO) {
+                        if (coursedto != null) {
+                            int a = JOptionPane.showConfirmDialog(null, "you definitely want to delete", "delete course", JOptionPane.YES_NO_OPTION);
+                            if (a == JOptionPane.YES_OPTION) {
+                                OnLineCourseBLL onlineBLL = new OnLineCourseBLL();
+                                if (onlineBLL.deleteCourseOnline((OnLineCourseDTO) coursedto) > 0) {
+                                    JOptionPane.showMessageDialog(rootPane, "Delete course succefull");
+                                } else {
+                                    JOptionPane.showMessageDialog(rootPane, "Fail, Delte course fail", "Error", JOptionPane.ERROR_MESSAGE);
+                                }
+                            }
+                        } else {
+                            JOptionPane.showMessageDialog(rootPane, "Fail, This course can't be delete", "Error", JOptionPane.ERROR_MESSAGE);
+                        }
+                    }
                 }
             }
         });
     }
 
     public void loadCourse() {
+
         courselist = course.getAllCourses();
         tableModel.setRowCount(0);
         for (CourseDTO dto : courselist) {
+            String type = dto instanceof OnLineCourseDTO ? "Online" : "offline";
             Vector vec = new Vector();
             vec.add(dto.getCourseID());
             vec.add(dto.getTitle());
             vec.add(dto.getCredits());
             vec.add(dto.getDepartmentID());
+            vec.add(type);
             tableModel.addRow(vec);
         }
     }
@@ -84,7 +186,7 @@ public class HomeGUI extends javax.swing.JFrame {
     public void searchCourse() {
         String searchText = jTextField5.getText().trim();
         if (searchText.isEmpty()) {
-            JOptionPane.showMessageDialog(null, "Vui lòng nhập thông tin tìm kiếm!");
+            JOptionPane.showMessageDialog(rootPane, "Fail, Please enter search", "Error", JOptionPane.ERROR_MESSAGE);
             return;
         }
         try {
@@ -93,14 +195,15 @@ public class HomeGUI extends javax.swing.JFrame {
             if (courseFoundByID != null) {
                 displayCourse(courseFoundByID);
             } else {
-                JOptionPane.showMessageDialog(null, "Không tìm thấy thông tin !");
+                JOptionPane.showMessageDialog(rootPane, "Not found course", "Error", JOptionPane.ERROR_MESSAGE);
+
             }
         } catch (NumberFormatException e) {
             ArrayList<CourseDTO> coursesFoundByTitle = course.searchCourseByTitle(searchText);
             if (!coursesFoundByTitle.isEmpty()) {
                 displayCourse(coursesFoundByTitle.get(0));
             } else {
-                JOptionPane.showMessageDialog(null, "Không tìm thấy thông tin !");
+                JOptionPane.showMessageDialog(rootPane, "Not found course", "Error", JOptionPane.ERROR_MESSAGE);
             }
         }
     }
@@ -108,14 +211,16 @@ public class HomeGUI extends javax.swing.JFrame {
     private void displayCourse(CourseDTO course) {
         jTextField5.setText("");
         tableModel.setRowCount(0);
+        String type = course instanceof OnLineCourseDTO ? "Online" : "offline";
         Vector<Object> vec = new Vector<>();
         vec.add(course.getCourseID());
         vec.add(course.getTitle());
         vec.add(course.getCredits());
         vec.add(course.getDepartmentID());
+        vec.add(type);
         tableModel.addRow(vec);
     }
-    
+
     /**
      * This method is called from within the constructor to initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is always
@@ -138,6 +243,7 @@ public class HomeGUI extends javax.swing.JFrame {
         jButton3 = new javax.swing.JButton();
         jComboBox1 = new javax.swing.JComboBox<>();
         jLabel1 = new javax.swing.JLabel();
+        jButton1 = new javax.swing.JButton();
         jPanel2 = new javax.swing.JPanel();
         jPanel3 = new javax.swing.JPanel();
 
@@ -159,13 +265,13 @@ public class HomeGUI extends javax.swing.JFrame {
         jTable1.setBorder(javax.swing.BorderFactory.createTitledBorder(null, "", javax.swing.border.TitledBorder.DEFAULT_JUSTIFICATION, javax.swing.border.TitledBorder.DEFAULT_POSITION, new java.awt.Font("sansserif", 1, 14))); // NOI18N
         jTable1.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
-                {null, null, null, null},
-                {null, null, null, null},
-                {null, null, null, null},
-                {null, null, null, null}
+                {null, null, null, null, null},
+                {null, null, null, null, null},
+                {null, null, null, null, null},
+                {null, null, null, null, null}
             },
             new String [] {
-                "CourseID", "Title", "Credits", "DepartmentID"
+                "CourseID", "Title", "Credits", "DepartmentID", "Category"
             }
         ));
         jTable1.addMouseListener(new java.awt.event.MouseAdapter() {
@@ -207,7 +313,7 @@ public class HomeGUI extends javax.swing.JFrame {
                 .addContainerGap())
         );
 
-        jComboBox1.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "OnlineCourse", "OnsiteCourse" }));
+        jComboBox1.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Selected add course", "OnlineCourse", "OnsiteCourse" }));
         jComboBox1.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 jComboBox1ActionPerformed(evt);
@@ -215,6 +321,13 @@ public class HomeGUI extends javax.swing.JFrame {
         });
 
         jLabel1.setText("Add Course");
+
+        jButton1.setText("Reload");
+        jButton1.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton1ActionPerformed(evt);
+            }
+        });
 
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
@@ -228,6 +341,8 @@ public class HomeGUI extends javax.swing.JFrame {
                         .addComponent(jTextField5, javax.swing.GroupLayout.PREFERRED_SIZE, 202, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addGap(18, 18, 18)
                         .addComponent(jButton5, javax.swing.GroupLayout.PREFERRED_SIZE, 73, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addComponent(jButton1, javax.swing.GroupLayout.PREFERRED_SIZE, 73, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                         .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, 72, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
@@ -243,7 +358,8 @@ public class HomeGUI extends javax.swing.JFrame {
                     .addComponent(jTextField5, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jButton5)
                     .addComponent(jLabel1)
-                    .addComponent(jComboBox1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(jComboBox1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jButton1))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jPanel7, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addContainerGap())
@@ -321,6 +437,11 @@ public class HomeGUI extends javax.swing.JFrame {
         // TODO add your handling code here:
     }//GEN-LAST:event_jTable1MouseClicked
 
+    private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
+        loadCourse();
+        // TODO add your handling code here:
+    }//GEN-LAST:event_jButton1ActionPerformed
+
     /**
      * @param args the command line arguments
      */
@@ -357,6 +478,7 @@ public class HomeGUI extends javax.swing.JFrame {
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JButton jButton1;
     private javax.swing.JButton jButton2;
     private javax.swing.JButton jButton3;
     private javax.swing.JButton jButton5;

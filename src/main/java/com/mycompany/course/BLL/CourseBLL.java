@@ -13,18 +13,16 @@ public class CourseBLL {
     public ArrayList<CourseDTO> getAllCourses(){
         return dal.getAllCourse();
     }
-    public int insertCourse(CourseDTO dto){
-        if(dal.insertCourse(dto)>0){
-            return 1;
-        }
-        return -1;
+    public ArrayList<CourseDTO> getCourseById(int id){
+        return dal.getCourseByID(id);
     }
-     public int updateCourse(CourseDTO dto){
-        if(dal.updateCourse(dto)>0){
-            return 1;
-        }
-        return -1;
+    
+     public boolean updateCourse(CourseDTO dto){
+        return dal.updateCourse(dto);
     }
+     public CourseDTO getCourseNotInstructorByID(int id){
+         return dal.getCourseNotInstructorByID(id);
+     }
      public int deleteCourse(CourseDTO dto){
         if(dal.deleteCourse(dto)>0){
             return 1;

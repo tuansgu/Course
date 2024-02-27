@@ -4,11 +4,14 @@
  */
 package com.mycompany.course.DAL;
 
+import com.mycompany.course.BLL.CourseBLL;
 import com.mycompany.course.DTO.CourseDTO;
 import com.mycompany.course.DTO.OnLineCourseDTO;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
 import java.util.ArrayList;
 
 /**
@@ -17,56 +20,76 @@ import java.util.ArrayList;
  */
 public class OnLineCourseDAL {
 
-    MyConnection data = new MyConnection();
+    CourseBLL coursebll = new CourseBLL();
+    public boolean insertCourseOnline(OnLineCourseDTO dto) {
+        Connection con = null;
+        boolean result=false;
+        try {
+            con = MyConnection.connect();
+            String courseInsertSql = "INSERT INTO Course (Title,Credits,DepartmentID) VALUES (?,?,?)";
+            String onlineCourseInsertSql = "INSERT INTO onlinecourse (CourseID, url) VALUES (?, ?)";
+            // Thực hiện chèn khóa học và lấy giá trị tự động được tạo cho CourseID
+            try (PreparedStatement courseStatement = con.prepareStatement(courseInsertSql, Statement.RETURN_GENERATED_KEYS)) {
+                courseStatement.setString(1, dto.getTitle());
+                courseStatement.setInt(2, dto.getCredits());
+                courseStatement.setInt(3, dto.getDepartmentID());
+                int affectedRows = courseStatement.executeUpdate();
 
-    public int insertCourseOnline(OnLineCourseDTO dto) {
+                if (affectedRows == 0) {
+                    throw new SQLException("Creating course failed, no rows affected.");
+                }
+
+                try (ResultSet generatedKeys = courseStatement.getGeneratedKeys()) {
+                    if (generatedKeys.next()) {
+                        int courseId = generatedKeys.getInt(1);
+                        // Thêm dòng mới vào bảng onlinecourse với courseId vừa được tạo
+                        try (PreparedStatement onlineCourseStatement = con.prepareStatement(onlineCourseInsertSql)) {
+                            onlineCourseStatement.setInt(1, courseId);
+                            onlineCourseStatement.setString(2, dto.getUrl());
+                            int row= onlineCourseStatement.executeUpdate();
+                            if(row>0){
+                                result=true;
+                            }
+                        }
+                    } else {
+                        throw new SQLException("Creating course failed, no ID obtained.");
+                    }
+                }
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        } finally {
+            MyConnection.close(con);
+        }
+        return result;
+    }
+
+    public boolean updateCourseOnline(OnLineCourseDTO dto) {
+        boolean result = false;
+        Connection con = null;
+        try {
+            con = MyConnection.connect();
+            String sql = "UPDATE onlinecourse SET url=? WHERE CourseID=? ";
+            PreparedStatement st = con.prepareStatement(sql);
+            st.setString(1, dto.getUrl());
+            st.setInt(2, dto.getCourseID());
+            result = st.execute();
+            System.err.println(result);
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            MyConnection.close(con);
+        }
+        return result;
+    }
+    public int deleteCourseOnline(CourseDTO dto) {
         int result = -1;
         Connection con = null;
         try {
             con = MyConnection.connect();
-            String sql = "INSERT INTO onlinecourse (CourseID, url) VALUES (?, ?)";
+            String sql = "DELETE FROM onlinecourse WHERE CourseID=?";
             PreparedStatement st = con.prepareStatement(sql);
             st.setInt(1, dto.getCourseID());
-            st.setString(2, dto.getUrl());
-            result = st.executeUpdate();
-
-        } catch (Exception e) {
-            e.printStackTrace();
-        } finally {
-            MyConnection.close(con);
-        }
-        return result;
-    }
-
-    public int updateCourse(CourseDTO dto) {
-        int result = -1;
-        Connection con = null;
-        try {
-            con = MyConnection.connect();
-            String sql = "UPDATE Course SET Title=?,Credits=?,DepartmentID=? WHERE CourseID=? ";
-            PreparedStatement st = con.prepareStatement(sql);
-            st.setString(1, dto.getTitle());
-            st.setInt(2, dto.getCredits());
-            st.setInt(3, dto.getDepartmentID());
-            st.setInt(4, dto.getCourseID());
-            result = st.executeUpdate();
-
-        } catch (Exception e) {
-            e.printStackTrace();
-        } finally {
-            MyConnection.close(con);
-        }
-        return result;
-    }
-
-    public int deleteCourse(CourseDTO dto) {
-        int result = -1;
-        Connection con = null;
-        try {
-            con = MyConnection.connect();
-            String sql = "DELETE FROM Course WHERE CourseID=?";
-            PreparedStatement st = con.prepareStatement(sql);
-            st.setInt(1, dto.getCourseID());
             result = st.executeUpdate();
         } catch (Exception e) {
             e.printStackTrace();
@@ -74,54 +97,5 @@ public class OnLineCourseDAL {
             MyConnection.close(con);
         }
         return result;
-    }
-
-    public CourseDTO findCourseByID(int courseID) {
-        CourseDTO course = null;
-        Connection con = null;
-        try {
-            con = MyConnection.connect();
-            String sql = "SELECT * FROM Course WHERE CourseID=?";
-            PreparedStatement st = con.prepareStatement(sql);
-            st.setInt(1, courseID);
-            ResultSet rs = st.executeQuery();
-            if (rs.next()) {
-                course = new CourseDTO();
-                course.setCourseID(rs.getInt("CourseID"));
-                course.setTitle(rs.getString("Title"));
-                course.setCredits(rs.getInt("Credits"));
-                course.setDepartmentID(rs.getInt("DepartmentID"));
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
-        } finally {
-            MyConnection.close(con);
-        }
-        return course;
-    }
-
-    public ArrayList<CourseDTO> findCoursesByTitle(String title) {
-        ArrayList<CourseDTO> courses = new ArrayList<>();
-        Connection con = null;
-        try {
-            con = MyConnection.connect();
-            String sql = "SELECT * FROM Course WHERE Title LIKE ?";
-            PreparedStatement st = con.prepareStatement(sql);
-            st.setString(1, "%" + title + "%");
-            ResultSet rs = st.executeQuery();
-            while (rs.next()) {
-                CourseDTO course = new CourseDTO();
-                course.setCourseID(rs.getInt("CourseID"));
-                course.setTitle(rs.getString("Title"));
-                course.setCredits(rs.getInt("Credits"));
-                course.setDepartmentID(rs.getInt("DepartmentID"));
-                courses.add(course);
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
-        } finally {
-            MyConnection.close(con);
-        }
-        return courses;
     }
 }

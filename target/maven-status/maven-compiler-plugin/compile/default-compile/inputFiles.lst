@@ -1,13 +1,13 @@
 E:\nam_hoc_2024\xd_pm_mohinh_phanlop\desktop\Course\src\main\java\com\mycompany\course\DTO\DepartmentDTO.java
 E:\nam_hoc_2024\xd_pm_mohinh_phanlop\desktop\Course\src\main\java\com\mycompany\course\GUI\EditCourseSiteDig.java
 E:\nam_hoc_2024\xd_pm_mohinh_phanlop\desktop\Course\src\main\java\com\mycompany\course\DAL\StudentGradeDAL.java
-E:\nam_hoc_2024\xd_pm_mohinh_phanlop\desktop\Course\src\main\java\com\mycompany\course\GUI\DetailCourseDig.java
 E:\nam_hoc_2024\xd_pm_mohinh_phanlop\desktop\Course\src\main\java\com\mycompany\course\BLL\DepartmentBLL.java
 E:\nam_hoc_2024\xd_pm_mohinh_phanlop\desktop\Course\src\main\java\com\mycompany\course\DTO\OnSiteCourseDTO.java
 E:\nam_hoc_2024\xd_pm_mohinh_phanlop\desktop\Course\src\main\java\com\mycompany\course\GUI\EditCourseOnlieDig.java
 E:\nam_hoc_2024\xd_pm_mohinh_phanlop\desktop\Course\src\main\java\com\mycompany\course\BLL\OnLineCourseBLL.java
 E:\nam_hoc_2024\xd_pm_mohinh_phanlop\desktop\Course\src\main\java\com\mycompany\course\DTO\CourseInstructorDTO.java
 E:\nam_hoc_2024\xd_pm_mohinh_phanlop\desktop\Course\src\main\java\com\mycompany\course\DTO\PersonDTO.java
+E:\nam_hoc_2024\xd_pm_mohinh_phanlop\desktop\Course\src\main\java\com\mycompany\course\GUI\DetailCourseSiteDig.java
 E:\nam_hoc_2024\xd_pm_mohinh_phanlop\desktop\Course\src\main\java\com\mycompany\course\BLL\OnSiteCourseBLL.java
 E:\nam_hoc_2024\xd_pm_mohinh_phanlop\desktop\Course\src\main\java\com\mycompany\course\DAL\OnLineCourseDAL.java
 E:\nam_hoc_2024\xd_pm_mohinh_phanlop\desktop\Course\src\main\java\com\mycompany\course\GUI\AddCourseOnlieDig.java
@@ -22,6 +22,7 @@ E:\nam_hoc_2024\xd_pm_mohinh_phanlop\desktop\Course\src\main\java\com\mycompany\
 E:\nam_hoc_2024\xd_pm_mohinh_phanlop\desktop\Course\src\main\java\com\mycompany\course\DTO\OnLineCourseDTO.java
 E:\nam_hoc_2024\xd_pm_mohinh_phanlop\desktop\Course\src\main\java\com\mycompany\course\DAL\OnSiteCourseDAL.java
 E:\nam_hoc_2024\xd_pm_mohinh_phanlop\desktop\Course\src\main\java\com\mycompany\course\DTO\StudentGradeDTO.java
+E:\nam_hoc_2024\xd_pm_mohinh_phanlop\desktop\Course\src\main\java\com\mycompany\course\GUI\DetailCourseOnlieDig.java
 E:\nam_hoc_2024\xd_pm_mohinh_phanlop\desktop\Course\src\main\java\com\mycompany\course\DAL\CourseDAL.java
 E:\nam_hoc_2024\xd_pm_mohinh_phanlop\desktop\Course\src\main\java\com\mycompany\course\DAL\MyConnection.java
 E:\nam_hoc_2024\xd_pm_mohinh_phanlop\desktop\Course\src\main\java\com\mycompany\course\DAL\DepartmentDAL.java

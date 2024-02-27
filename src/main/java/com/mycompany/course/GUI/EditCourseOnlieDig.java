@@ -12,7 +12,9 @@ import com.mycompany.course.DTO.DepartmentDTO;
 import com.mycompany.course.DTO.OnLineCourseDTO;
 import java.util.ArrayList;
 import java.util.StringTokenizer;
+import javax.swing.JComboBox;
 import javax.swing.JOptionPane;
+import javax.swing.JTextField;
 
 /**
  *
@@ -25,7 +27,11 @@ public class EditCourseOnlieDig extends javax.swing.JDialog {
      */
     CourseBLL courseBLL = new CourseBLL();
     OnLineCourseBLL onlineCourseBLL = new OnLineCourseBLL();
+     private int courseId;
 
+    public void setCourseId(int courseId) {
+        this.courseId = courseId;
+    }
     public EditCourseOnlieDig(java.awt.Frame parent, boolean modal) {
         super(parent, modal);
         initComponents();
@@ -45,8 +51,24 @@ public class EditCourseOnlieDig extends javax.swing.JDialog {
         }
     }
 
-    private void addOnlineCourse() {
-        int courseID = Integer.parseInt(jTextField4.getText());
+    void setCourseOnline(String Title, int credit, String url, int department) {
+        jTextField1.setText(Title);
+        jTextField2.setText(String.valueOf(credit));
+        jTextField3.setText(url);
+
+        String departmentString = String.valueOf(department); // Chuyển department sang dạng chuỗi
+        int itemCount = jComboBox1.getItemCount();
+        for (int i = 0; i < itemCount; i++) {
+            String item = (String) jComboBox1.getItemAt(i);
+            if (item.contains(departmentString)) {
+                jComboBox1.setSelectedIndex(i);
+                break;
+            }
+        }
+
+    }
+
+    private void EditOnlineCourse() {
         String title = jTextField1.getText();
         if (title.isEmpty()) {
             JOptionPane.showMessageDialog(this, "Title cannot be empty", "Error", JOptionPane.ERROR_MESSAGE);
@@ -76,15 +98,19 @@ public class EditCourseOnlieDig extends javax.swing.JDialog {
             JOptionPane.showMessageDialog(this, "Please select a department", "Error", JOptionPane.ERROR_MESSAGE);
             return;
         }
-        CourseDTO courseDTO = new CourseDTO(courseID, title, credit, departmentID);
-        int insertResult = courseBLL.insertCourse(courseDTO);
-        if (insertResult != -1) {
-            OnLineCourseDTO onlineCourseDTO = new OnLineCourseDTO(courseID, url);
-            int insertResultOnline = onlineCourseBLL.insertCourseOnline(onlineCourseDTO);
-            if (insertResultOnline != -1) {
-                JOptionPane.showMessageDialog(this, "Online course added successfully");
-            } else {
-                JOptionPane.showMessageDialog(this, "Failed to add online course", "Error", JOptionPane.ERROR_MESSAGE);
+        CourseDTO dto = new CourseDTO();
+        dto=courseBLL.getCourseById(courseId).get(0);
+        dto.setTitle(title);
+        dto.setCredits(credit);
+        dto.setDepartmentID(departmentID);
+       // onlineCourseBLL.updateCourseOnline((OnLineCourseDTO) dto)
+        if (dto instanceof OnLineCourseDTO) {
+            ((OnLineCourseDTO) dto).setUrl(url);
+           
+            if(onlineCourseBLL.updateOnline((OnLineCourseDTO) dto)==false){
+                JOptionPane.showMessageDialog(this, "Online course edit successfully");
+            }else{
+                JOptionPane.showMessageDialog(this, "Failed to edit online course", "Error", JOptionPane.ERROR_MESSAGE);
             }
         }
     }
@@ -108,8 +134,7 @@ public class EditCourseOnlieDig extends javax.swing.JDialog {
         jLabel5 = new javax.swing.JLabel();
         jTextField3 = new javax.swing.JTextField();
         jButton1 = new javax.swing.JButton();
-        jLabel6 = new javax.swing.JLabel();
-        jTextField4 = new javax.swing.JTextField();
+        jButton2 = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
 
@@ -120,18 +145,23 @@ public class EditCourseOnlieDig extends javax.swing.JDialog {
         jLabel3.setText("DepartmentsID:");
 
         jLabel4.setFont(new java.awt.Font("sansserif", 0, 14)); // NOI18N
-        jLabel4.setText("Add Course Online");
+        jLabel4.setText("Edit Course Online");
 
         jLabel5.setText("Url:");
 
-        jButton1.setText("Add ");
+        jButton1.setText("Save");
         jButton1.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 jButton1ActionPerformed(evt);
             }
         });
 
-        jLabel6.setText("CourseID:");
+        jButton2.setText("Exit");
+        jButton2.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton2ActionPerformed(evt);
+            }
+        });
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
@@ -140,40 +170,36 @@ public class EditCourseOnlieDig extends javax.swing.JDialog {
             .addGroup(layout.createSequentialGroup()
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(layout.createSequentialGroup()
-                        .addGap(140, 140, 140)
-                        .addComponent(jLabel4, javax.swing.GroupLayout.PREFERRED_SIZE, 143, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addGroup(layout.createSequentialGroup()
                         .addGap(60, 60, 60)
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, 41, javax.swing.GroupLayout.PREFERRED_SIZE)
                             .addComponent(jLabel2, javax.swing.GroupLayout.PREFERRED_SIZE, 41, javax.swing.GroupLayout.PREFERRED_SIZE)
                             .addComponent(jLabel5, javax.swing.GroupLayout.PREFERRED_SIZE, 41, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(jLabel3, javax.swing.GroupLayout.PREFERRED_SIZE, 87, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(jLabel6, javax.swing.GroupLayout.PREFERRED_SIZE, 65, javax.swing.GroupLayout.PREFERRED_SIZE))
+                            .addComponent(jLabel3, javax.swing.GroupLayout.PREFERRED_SIZE, 87, javax.swing.GroupLayout.PREFERRED_SIZE))
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addGroup(layout.createSequentialGroup()
                                 .addGap(22, 22, 22)
-                                .addComponent(jButton1, javax.swing.GroupLayout.PREFERRED_SIZE, 109, javax.swing.GroupLayout.PREFERRED_SIZE))
+                                .addComponent(jButton1, javax.swing.GroupLayout.PREFERRED_SIZE, 88, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addGap(27, 27, 27)
+                                .addComponent(jButton2))
                             .addGroup(layout.createSequentialGroup()
                                 .addGap(18, 18, 18)
                                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                                     .addComponent(jTextField3, javax.swing.GroupLayout.DEFAULT_SIZE, 193, Short.MAX_VALUE)
                                     .addComponent(jComboBox1, 0, 193, Short.MAX_VALUE)
                                     .addComponent(jTextField2, javax.swing.GroupLayout.DEFAULT_SIZE, 193, Short.MAX_VALUE)
-                                    .addComponent(jTextField1, javax.swing.GroupLayout.DEFAULT_SIZE, 193, Short.MAX_VALUE)
-                                    .addComponent(jTextField4))))))
-                .addContainerGap(75, Short.MAX_VALUE))
+                                    .addComponent(jTextField1, javax.swing.GroupLayout.DEFAULT_SIZE, 193, Short.MAX_VALUE)))))
+                    .addGroup(layout.createSequentialGroup()
+                        .addGap(145, 145, 145)
+                        .addComponent(jLabel4, javax.swing.GroupLayout.PREFERRED_SIZE, 143, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                .addContainerGap(73, Short.MAX_VALUE))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
-                .addGap(22, 22, 22)
+                .addContainerGap(26, Short.MAX_VALUE)
                 .addComponent(jLabel4, javax.swing.GroupLayout.PREFERRED_SIZE, 16, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jLabel6)
-                    .addComponent(jTextField4, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(18, 18, 18)
+                .addGap(46, 46, 46)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jTextField1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jLabel1))
@@ -190,7 +216,9 @@ public class EditCourseOnlieDig extends javax.swing.JDialog {
                     .addComponent(jLabel3)
                     .addComponent(jComboBox1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addGap(56, 56, 56)
-                .addComponent(jButton1)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jButton1)
+                    .addComponent(jButton2))
                 .addGap(24, 24, 24))
         );
 
@@ -198,9 +226,13 @@ public class EditCourseOnlieDig extends javax.swing.JDialog {
     }// </editor-fold>//GEN-END:initComponents
 
     private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
-        addOnlineCourse();
+        EditOnlineCourse();
         // TODO add your handling code here:
     }//GEN-LAST:event_jButton1ActionPerformed
+
+    private void jButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton2ActionPerformed
+        this.dispose();
+    }//GEN-LAST:event_jButton2ActionPerformed
 
     /**
      * @param args the command line arguments
@@ -253,16 +285,19 @@ public class EditCourseOnlieDig extends javax.swing.JDialog {
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton jButton1;
+    private javax.swing.JButton jButton2;
     private javax.swing.JComboBox<String> jComboBox1;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
     private javax.swing.JLabel jLabel4;
     private javax.swing.JLabel jLabel5;
-    private javax.swing.JLabel jLabel6;
     private javax.swing.JTextField jTextField1;
     private javax.swing.JTextField jTextField2;
     private javax.swing.JTextField jTextField3;
-    private javax.swing.JTextField jTextField4;
     // End of variables declaration//GEN-END:variables
+
+    void setFields(String title, int credits, String url, String title0) {
+        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+    }
 }

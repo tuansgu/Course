@@ -1,30 +1,18 @@
 package com.mycompany.course.DTO;
 
-public class OnLineCourseDTO 
+public class OnLineCourseDTO extends CourseDTO
 {
-    private int courseID;
-    private String url;
-    
+    protected String url;
     public OnLineCourseDTO()
     {
         // none parameters
+         super();
     }
 
-    public OnLineCourseDTO(int courseID, String url) {
-        this.courseID = courseID;
+    public OnLineCourseDTO(int courseID, String title, int credits, int departmentID,String url) {
+        super(courseID, title, credits, departmentID);
         this.url = url;
     }
-
-    public int getCourseID() 
-    {
-        return courseID;
-    }
-
-    public void setCourseID(int courseID) 
-    {
-        this.courseID = courseID;
-    }
-
     public String getUrl() 
     {
         return url;

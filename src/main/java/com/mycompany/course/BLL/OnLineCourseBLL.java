@@ -13,9 +13,30 @@ import com.mycompany.course.DTO.OnLineCourseDTO;
  * @author pc
  */
 public class OnLineCourseBLL {
-     OnLineCourseDAL dal=new OnLineCourseDAL();
-     public int insertCourseOnline(OnLineCourseDTO dto){
-        if(dal.insertCourseOnline(dto)>0){
+
+    OnLineCourseDAL dal = new OnLineCourseDAL();
+    CourseBLL coursebll = new CourseBLL();
+
+    public boolean insertCourseOnline(OnLineCourseDTO dto) {
+        return dal.insertCourseOnline(dto);
+    }
+    // boolean courseupdate = coursebll.updateCourse(dto);
+
+    public boolean updateCourseOnline(OnLineCourseDTO dto) {
+        return dal.updateCourseOnline(dto);
+    }
+
+    public boolean updateOnline(OnLineCourseDTO dto) {
+        boolean courseupdate = coursebll.updateCourse(dto);
+        boolean onlineupdate = dal.updateCourseOnline(dto);
+        if (courseupdate == true && onlineupdate == true) {
+            return true;
+        }
+        return false;
+    }
+
+    public int deleteCourseOnline(OnLineCourseDTO dto) {
+        if (coursebll.deleteCourse(dto) > 0 && dal.deleteCourseOnline(dto) > 0) {
             return 1;
         }
         return -1;

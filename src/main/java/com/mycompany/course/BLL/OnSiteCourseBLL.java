@@ -6,6 +6,7 @@ package com.mycompany.course.BLL;
 
 import com.mycompany.course.DAL.OnSiteCourseDAL;
 import com.mycompany.course.DTO.CourseDTO;
+import com.mycompany.course.DTO.OnLineCourseDTO;
 import com.mycompany.course.DTO.OnSiteCourseDTO;
 
 /**
@@ -13,11 +14,20 @@ import com.mycompany.course.DTO.OnSiteCourseDTO;
  * @author pc
  */
 public class OnSiteCourseBLL {
+     CourseBLL coursebll = new CourseBLL();
     OnSiteCourseDAL dal=new OnSiteCourseDAL();
-     public int insertCourseOnSite(OnSiteCourseDTO dto){
-        if(dal.insertCourseOnsite(dto)>0){
-            return 1;
+     public boolean insertCourseOnSite(OnSiteCourseDTO dto){
+        return dal.insertCourseOnsite(dto);
+    }
+     public boolean updateCourseOnline(OnSiteCourseDTO dto){
+        return dal.updateCourseOnsite(dto);
+     }
+      public boolean updateOnsite(OnSiteCourseDTO dto) {
+        boolean courseupdate = coursebll.updateCourse(dto);
+        boolean onsiteupdate = dal.updateCourseOnsite(dto);
+        if (courseupdate == true && onsiteupdate == true) {
+            return true;
         }
-        return -1;
+        return false;
     }
 }
