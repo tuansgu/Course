@@ -87,10 +87,15 @@ public class AddCourseOnlieDig extends javax.swing.JDialog {
         onlineCourseDTO.setCredits(credit);
         onlineCourseDTO.setDepartmentID(departmentID);
         onlineCourseDTO.setUrl(url);
-//        int cour = courseBLL.insertCourse(onlineCourseDTO);
-//        if (cour != -1) {
-            onlineCourseBLL.insertCourseOnline(onlineCourseDTO);
-        //}
+        if (onlineCourseBLL.insertCourseOnline(onlineCourseDTO)) {
+            JOptionPane.showMessageDialog(rootPane, "Add course success");
+            HomeGUI home=new HomeGUI();
+            home.loadCourse();
+            this.dispose();
+        } else {
+            JOptionPane.showMessageDialog(this, "Faile add course", "Error", JOptionPane.ERROR_MESSAGE);
+        }
+
     }
 
     /**

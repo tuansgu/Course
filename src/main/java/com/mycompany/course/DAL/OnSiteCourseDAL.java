@@ -1,5 +1,6 @@
 package com.mycompany.course.DAL;
 
+import com.mycompany.course.DTO.CourseDTO;
 import com.mycompany.course.DTO.OnLineCourseDTO;
 import com.mycompany.course.DTO.OnSiteCourseDTO;
 import java.sql.Connection;
@@ -71,6 +72,23 @@ public class OnSiteCourseDAL {
             st.setInt(4, dto.getCourseID());
             result = st.execute();
             System.err.println(result);
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            MyConnection.close(con);
+        }
+        return result;
+    }
+    
+    public int deleteCourseOnsite(OnSiteCourseDTO dto) {
+        int result = -1;
+        Connection con = null;
+        try {
+            con = MyConnection.connect();
+            String sql = "DELETE FROM onsitecourse WHERE CourseID=?";
+            PreparedStatement st = con.prepareStatement(sql);
+            st.setInt(1, dto.getCourseID());
+            result = st.executeUpdate();
         } catch (Exception e) {
             e.printStackTrace();
         } finally {

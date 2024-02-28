@@ -14,20 +14,31 @@ import com.mycompany.course.DTO.OnSiteCourseDTO;
  * @author pc
  */
 public class OnSiteCourseBLL {
-     CourseBLL coursebll = new CourseBLL();
-    OnSiteCourseDAL dal=new OnSiteCourseDAL();
-     public boolean insertCourseOnSite(OnSiteCourseDTO dto){
+
+    CourseBLL coursebll = new CourseBLL();
+    OnSiteCourseDAL dal = new OnSiteCourseDAL();
+
+    public boolean insertCourseOnSite(OnSiteCourseDTO dto) {
         return dal.insertCourseOnsite(dto);
     }
-     public boolean updateCourseOnline(OnSiteCourseDTO dto){
+
+    public boolean updateCourseOnline(OnSiteCourseDTO dto) {
         return dal.updateCourseOnsite(dto);
-     }
-      public boolean updateOnsite(OnSiteCourseDTO dto) {
+    }
+
+    public boolean updateOnsite(OnSiteCourseDTO dto) {
         boolean courseupdate = coursebll.updateCourse(dto);
         boolean onsiteupdate = dal.updateCourseOnsite(dto);
         if (courseupdate == true && onsiteupdate == true) {
             return true;
         }
         return false;
+    }
+
+    public int deleteCourseOnsite(OnSiteCourseDTO dto) {
+        if (coursebll.deleteCourse(dto) > 0 && dal.deleteCourseOnsite(dto)>0) {
+            return 1;
+        }
+        return -1;
     }
 }

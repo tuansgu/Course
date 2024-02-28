@@ -7,6 +7,7 @@ package com.mycompany.course.GUI;
 
 import com.mycompany.course.BLL.CourseBLL;
 import com.mycompany.course.BLL.OnLineCourseBLL;
+import com.mycompany.course.BLL.OnSiteCourseBLL;
 import com.mycompany.course.DTO.CourseDTO;
 import com.mycompany.course.DTO.OnLineCourseDTO;
 import com.mycompany.course.DTO.OnSiteCourseDTO;
@@ -139,6 +140,7 @@ public class HomeGUI extends javax.swing.JFrame {
                                 OnLineCourseBLL onlineBLL = new OnLineCourseBLL();
                                 if (onlineBLL.deleteCourseOnline((OnLineCourseDTO) coursedto) > 0) {
                                     JOptionPane.showMessageDialog(rootPane, "Delete course succefull");
+                                    loadCourse();
                                 } else {
                                     JOptionPane.showMessageDialog(rootPane, "Fail, Delte course fail", "Error", JOptionPane.ERROR_MESSAGE);
                                 }
@@ -150,9 +152,11 @@ public class HomeGUI extends javax.swing.JFrame {
                         if (coursedto != null) {
                             int a = JOptionPane.showConfirmDialog(null, "you definitely want to delete", "delete course", JOptionPane.YES_NO_OPTION);
                             if (a == JOptionPane.YES_OPTION) {
+                                OnSiteCourseBLL onsiteBLL=new OnSiteCourseBLL();
                                 OnLineCourseBLL onlineBLL = new OnLineCourseBLL();
-                                if (onlineBLL.deleteCourseOnline((OnLineCourseDTO) coursedto) > 0) {
+                                if (onsiteBLL.deleteCourseOnsite((OnSiteCourseDTO) coursedto) > 0) {
                                     JOptionPane.showMessageDialog(rootPane, "Delete course succefull");
+                                    loadCourse();
                                 } else {
                                     JOptionPane.showMessageDialog(rootPane, "Fail, Delte course fail", "Error", JOptionPane.ERROR_MESSAGE);
                                 }
@@ -193,7 +197,7 @@ public class HomeGUI extends javax.swing.JFrame {
             int id = Integer.parseInt(searchText);
             CourseDTO courseFoundByID = course.searchCourseById(id);
             if (courseFoundByID != null) {
-                displayCourse(courseFoundByID);
+                displayCourseID(courseFoundByID);
             } else {
                 JOptionPane.showMessageDialog(rootPane, "Not found course", "Error", JOptionPane.ERROR_MESSAGE);
 
@@ -201,14 +205,14 @@ public class HomeGUI extends javax.swing.JFrame {
         } catch (NumberFormatException e) {
             ArrayList<CourseDTO> coursesFoundByTitle = course.searchCourseByTitle(searchText);
             if (!coursesFoundByTitle.isEmpty()) {
-                displayCourse(coursesFoundByTitle.get(0));
+                displayCourseID(coursesFoundByTitle.get(0));
             } else {
                 JOptionPane.showMessageDialog(rootPane, "Not found course", "Error", JOptionPane.ERROR_MESSAGE);
             }
         }
     }
 
-    private void displayCourse(CourseDTO course) {
+    private void displayCourseID(CourseDTO course) {
         jTextField5.setText("");
         tableModel.setRowCount(0);
         String type = course instanceof OnLineCourseDTO ? "Online" : "offline";
