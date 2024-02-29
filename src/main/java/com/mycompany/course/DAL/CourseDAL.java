@@ -195,9 +195,8 @@ public class CourseDAL {
     // lấy ra khóa học không được phân công 
     // dựa vào id
     public CourseDTO getCourseNotInstructorByID(int id) {
-        
         Connection conn = null;
-        try {
+        try { 
             conn = MyConnection.connect();
             String sql = "SELECT * FROM course\n"
                     + "LEFT JOIN onsitecourse ON course.CourseID = onsitecourse.CourseID\n"

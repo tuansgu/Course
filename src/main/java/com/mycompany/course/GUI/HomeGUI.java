@@ -132,14 +132,14 @@ public class HomeGUI extends javax.swing.JFrame {
                     } else if (coursedto instanceof OnSiteCourseDTO) {
                         DetailCourseSiteDig detailOnsite = new DetailCourseSiteDig(new HomeGUI(), true);
                         detailOnsite.setCourseOnsite(
-                                coursedto.getCourseID(), 
-                                coursedto.getTitle(), 
-                                coursedto.getCredits(), 
-                                coursedto.getDepartmentID(), 
-                                ((OnSiteCourseDTO) coursedto).getLocation(), 
-                                ((OnSiteCourseDTO) coursedto).getDays(), 
+                                coursedto.getCourseID(),
+                                coursedto.getTitle(),
+                                coursedto.getCredits(),
+                                coursedto.getDepartmentID(),
+                                ((OnSiteCourseDTO) coursedto).getLocation(),
+                                ((OnSiteCourseDTO) coursedto).getDays(),
                                 ((OnSiteCourseDTO) coursedto).getTime());
-                                
+
                         detailOnsite.setVisible(true);
                     }
                 }
@@ -167,14 +167,12 @@ public class HomeGUI extends javax.swing.JFrame {
                                     JOptionPane.showMessageDialog(rootPane, "Fail, Delte course fail", "Error", JOptionPane.ERROR_MESSAGE);
                                 }
                             }
-                        } else {
-                            JOptionPane.showMessageDialog(rootPane, "Fail, This course can't be delete", "Error", JOptionPane.ERROR_MESSAGE);
                         }
                     } else if (coursedto instanceof OnSiteCourseDTO) {
                         if (coursedto != null) {
                             int a = JOptionPane.showConfirmDialog(null, "you definitely want to delete", "delete course", JOptionPane.YES_NO_OPTION);
                             if (a == JOptionPane.YES_OPTION) {
-                                OnSiteCourseBLL onsiteBLL=new OnSiteCourseBLL();
+                                OnSiteCourseBLL onsiteBLL = new OnSiteCourseBLL();
                                 OnLineCourseBLL onlineBLL = new OnLineCourseBLL();
                                 if (onsiteBLL.deleteCourseOnsite((OnSiteCourseDTO) coursedto) > 0) {
                                     JOptionPane.showMessageDialog(rootPane, "Delete course succefull");
@@ -183,9 +181,10 @@ public class HomeGUI extends javax.swing.JFrame {
                                     JOptionPane.showMessageDialog(rootPane, "Fail, Delte course fail", "Error", JOptionPane.ERROR_MESSAGE);
                                 }
                             }
-                        } else {
-                            JOptionPane.showMessageDialog(rootPane, "Fail, This course can't be delete", "Error", JOptionPane.ERROR_MESSAGE);
                         }
+                    } else {
+                        JOptionPane.showMessageDialog(rootPane, "Fail, This course can't be delete", "Error", JOptionPane.ERROR_MESSAGE);
+
                     }
                 }
             }
@@ -383,9 +382,6 @@ public class HomeGUI extends javax.swing.JFrame {
         jPanel7 = new javax.swing.JPanel();
         jScrollPane1 = new javax.swing.JScrollPane();
         jTable1 = new javax.swing.JTable();
-        jLabel2 = new javax.swing.JLabel();
-        jButton2 = new javax.swing.JButton();
-        jButton3 = new javax.swing.JButton();
         jComboBox1 = new javax.swing.JComboBox<>();
         jLabel1 = new javax.swing.JLabel();
         jButton1 = new javax.swing.JButton();
@@ -436,35 +432,16 @@ public class HomeGUI extends javax.swing.JFrame {
         });
         jScrollPane1.setViewportView(jTable1);
 
-        jLabel2.setText("1/10");
-
-        jButton2.setText(">");
-
-        jButton3.setText("<");
-
         javax.swing.GroupLayout jPanel7Layout = new javax.swing.GroupLayout(jPanel7);
         jPanel7.setLayout(jPanel7Layout);
         jPanel7Layout.setHorizontalGroup(
             jPanel7Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addComponent(jScrollPane1, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 1113, Short.MAX_VALUE)
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel7Layout.createSequentialGroup()
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addComponent(jButton3)
-                .addGap(18, 18, 18)
-                .addComponent(jLabel2, javax.swing.GroupLayout.PREFERRED_SIZE, 31, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jButton2)
-                .addContainerGap())
         );
         jPanel7Layout.setVerticalGroup(
             jPanel7Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jPanel7Layout.createSequentialGroup()
-                .addGroup(jPanel7Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                    .addComponent(jButton2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(jLabel2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(jButton3, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 519, javax.swing.GroupLayout.PREFERRED_SIZE)
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel7Layout.createSequentialGroup()
+                .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 573, Short.MAX_VALUE)
                 .addContainerGap())
         );
 
@@ -796,12 +773,9 @@ public class HomeGUI extends javax.swing.JFrame {
     private javax.swing.JTable courseInstructorTable;
     private javax.swing.JTextField inputSearchTextField;
     private javax.swing.JButton jButton1;
-    private javax.swing.JButton jButton2;
-    private javax.swing.JButton jButton3;
     private javax.swing.JButton jButton5;
     private javax.swing.JComboBox<String> jComboBox1;
     private javax.swing.JLabel jLabel1;
-    private javax.swing.JLabel jLabel2;
     private javax.swing.JOptionPane jOptionPane1;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanel2;
