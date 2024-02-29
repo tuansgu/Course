@@ -6,11 +6,14 @@
 package com.mycompany.course.GUI;
 
 import com.mycompany.course.BLL.CourseBLL;
+import com.mycompany.course.BLL.CourseInstructorBLL;
 import com.mycompany.course.BLL.OnLineCourseBLL;
 import com.mycompany.course.BLL.OnSiteCourseBLL;
 import com.mycompany.course.DTO.CourseDTO;
+import com.mycompany.course.DTO.CourseInstructorDTO;
 import com.mycompany.course.DTO.OnLineCourseDTO;
 import com.mycompany.course.DTO.OnSiteCourseDTO;
+import com.mycompany.course.DTO.PersonDTO;
 import java.awt.Color;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -33,9 +36,16 @@ public class HomeGUI extends javax.swing.JFrame {
      * Creates new form HomeGUI
      */
     private ArrayList<CourseDTO> courselist;
+    private CourseDTO Course;
+    private PersonDTO Person;
+    private CourseInstructorDTO courseInstructorDto;
+    private ArrayList<CourseInstructorDTO> courseInstructorList;
+    private DefaultTableModel tableCourseInstructor;
     private DefaultTableModel tableModel;
     CourseBLL course = new CourseBLL();
+    CourseInstructorBLL courseInstructor = new CourseInstructorBLL();
     JPopupMenu popupMenu = new JPopupMenu();
+    JPopupMenu jPopupMenu = new JPopupMenu();
     JMenuItem editMenuItem;
     JMenuItem deleteMenuItem;
     JMenuItem viewDetailsMenuItem;
@@ -45,16 +55,28 @@ public class HomeGUI extends javax.swing.JFrame {
         initComponents();
         this.setLocationRelativeTo(null);
         tableModel = (DefaultTableModel) jTable1.getModel();
+        tableCourseInstructor = (DefaultTableModel) courseInstructorTable.getModel();
 
         editMenuItem = new JMenuItem("Edit");
         deleteMenuItem = new JMenuItem("Delete");
         viewDetailsMenuItem = new JMenuItem("View Details");
+        
+        JMenuItem editItem = new JMenuItem("Edit");
+        JMenuItem deleteItem = new JMenuItem("Delete");
+        JMenuItem viewDetailsItem = new JMenuItem("View Details");
 
         popupMenu.add(editMenuItem);
         popupMenu.add(deleteMenuItem);
         popupMenu.add(viewDetailsMenuItem);
+        
+        jPopupMenu.add(editItem);
+        jPopupMenu.add(deleteItem);
+        jPopupMenu.add(viewDetailsItem);
 
         loadCourse();
+        loadCourseInstructor();
+        loadCourseIdInCombobox();
+        loadPersonIdInCombobox();
         // edit course
         editMenuItem.addActionListener(new ActionListener() {
             @Override
@@ -168,6 +190,61 @@ public class HomeGUI extends javax.swing.JFrame {
                 }
             }
         });
+        
+        editItem.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                int selectedRow = courseInstructorTable.getSelectedRow();
+
+                if (selectedRow != -1) {
+                    // Lấy dữ liệu từ hàng được chọn
+                    Object CourseID = courseInstructorTable.getValueAt(selectedRow, 0);
+                    Object PersonID = courseInstructorTable.getValueAt(selectedRow, 2);
+
+                    EditCourseInstructorDig dialog = new EditCourseInstructorDig(new javax.swing.JFrame(), true, CourseID.toString(), PersonID.toString());
+                    dialog.setVisible(true);
+                }
+            }
+        });
+
+        deleteItem.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                int selectedRow = courseInstructorTable.getSelectedRow();
+
+                if (selectedRow != -1) {
+                    int CourseID = (int) courseInstructorTable.getValueAt(selectedRow, 0);
+                    int PersonID = (int) courseInstructorTable.getValueAt(selectedRow, 2);
+                    if (courseInstructor.checkCourseActive(CourseID) != -1) {
+                        JOptionPane.showMessageDialog(null, "Delete failed! Course is active", "Fail", JOptionPane.INFORMATION_MESSAGE);
+                    } else {
+                        int deletionResult = courseInstructor.deleteCourseInstructor(CourseID);
+                        if (deletionResult == 1) {
+                            loadCourseIdInCombobox();
+                            loadCourseInstructor();
+                            JOptionPane.showMessageDialog(null, "Delete successful!", "Success", JOptionPane.INFORMATION_MESSAGE);
+                        } else {
+                            JOptionPane.showMessageDialog(null, "Delete failed! An error occurred", "Fail", JOptionPane.ERROR_MESSAGE);
+                        }
+                    }
+
+                }
+            }
+        });
+
+        viewDetailsItem.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                int selectedRow = courseInstructorTable.getSelectedRow();
+
+                if (selectedRow != -1) {
+                    // Lấy dữ liệu từ hàng được chọn
+                    int CourseID = (int) courseInstructorTable.getValueAt(selectedRow, 0);
+                    int PersonID = (int) courseInstructorTable.getValueAt(selectedRow, 2);
+
+                    // Khởi tạo đối tượng DetailCourseInstructor
+                    DetailCourseInstructor dialog = new DetailCourseInstructor(new javax.swing.JFrame(), true, CourseID, PersonID);
+                    dialog.setVisible(true);
+                }
+            }
+        });
     }
 
     public void loadCourse() {
@@ -225,6 +302,70 @@ public class HomeGUI extends javax.swing.JFrame {
         tableModel.addRow(vec);
     }
 
+    public void loadCourseInstructor() {
+        courseInstructorList = courseInstructor.getCourseInstructor();
+
+        tableCourseInstructor.setRowCount(0);
+        for (CourseInstructorDTO dto : courseInstructorList) {
+            Course = courseInstructor.getCourseByID(dto.getCourseID());
+            Person = courseInstructor.getPersonByPersonID(dto.getPersonID());
+            Vector vec = new Vector();
+            vec.add(Course.getCourseID());
+            vec.add(Course.getTitle());
+            vec.add(Person.getPersonID());
+            vec.add(Person.getFirstName());
+            tableCourseInstructor.addRow(vec);
+        }
+    }
+
+    public void loadCourseIdInCombobox() {
+        int[] courseId = new int[0];
+        String title = "";
+        String courseType = "";
+        courseId = course.getAllCourseId();
+
+        courseIdCombobox.removeAllItems();
+        courseIdCombobox.addItem("Select course id");
+
+        for (int item : courseId) {
+            title = course.getTitleById(item);
+            courseType = course.getCourseTypeById(item);
+            courseIdCombobox.addItem(String.valueOf(item) + " - " + title + " - " + courseType);
+        }
+
+        courseIdCombobox.setSelectedIndex(0);
+    }
+
+    public void loadPersonIdInCombobox() {
+        int[] personId = new int[0];
+        personId = courseInstructor.getAllPersonId();
+
+        personIdCombobox.removeAllItems();
+        personIdCombobox.addItem("Select person id");
+
+        for (int item : personId) {
+            Person = courseInstructor.getNamePersonById(item);
+            personIdCombobox.addItem(String.valueOf(item) + " - " + Person.getFirstName() + " " + Person.getLastName());
+        }
+
+        personIdCombobox.setSelectedIndex(0);
+    }
+
+    public void loadSearchCourseInstructor(String selectedValue) {
+        courseInstructorList = courseInstructor.findCoursesInstructorByTitle(selectedValue);
+        System.out.println(selectedValue);
+        tableCourseInstructor.setRowCount(0);
+        for (CourseInstructorDTO dto : courseInstructorList) {
+            Course = courseInstructor.getCourseByID(dto.getCourseID());
+            Person = courseInstructor.getPersonByPersonID(dto.getPersonID());
+            Vector vec = new Vector();
+            vec.add(Course.getCourseID());
+            vec.add(Course.getTitle());
+            vec.add(Person.getPersonID());
+            vec.add(Person.getFirstName());
+            tableCourseInstructor.addRow(vec);
+        }
+    }
     /**
      * This method is called from within the constructor to initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is always
@@ -249,6 +390,16 @@ public class HomeGUI extends javax.swing.JFrame {
         jLabel1 = new javax.swing.JLabel();
         jButton1 = new javax.swing.JButton();
         jPanel2 = new javax.swing.JPanel();
+        jPanel4 = new javax.swing.JPanel();
+        jPanel5 = new javax.swing.JPanel();
+        jScrollPane3 = new javax.swing.JScrollPane();
+        courseInstructorTable = new javax.swing.JTable();
+        courseIdCombobox = new javax.swing.JComboBox<>();
+        personIdCombobox = new javax.swing.JComboBox<>();
+        inputSearchTextField = new javax.swing.JTextField();
+        searchBtn = new javax.swing.JButton();
+        reloadBtn = new javax.swing.JButton();
+        addCourseInstructorCombobox = new javax.swing.JButton();
         jPanel3 = new javax.swing.JPanel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
@@ -295,7 +446,7 @@ public class HomeGUI extends javax.swing.JFrame {
         jPanel7.setLayout(jPanel7Layout);
         jPanel7Layout.setHorizontalGroup(
             jPanel7Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(jScrollPane1, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 1109, Short.MAX_VALUE)
+            .addComponent(jScrollPane1, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 1113, Short.MAX_VALUE)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel7Layout.createSequentialGroup()
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addComponent(jButton3)
@@ -371,15 +522,118 @@ public class HomeGUI extends javax.swing.JFrame {
 
         jTabbedPane1.addTab("Khóa Học", jPanel1);
 
+        jPanel5.setBackground(new java.awt.Color(0, 102, 102));
+        jPanel5.setBorder(javax.swing.BorderFactory.createTitledBorder("List Courses Instructor"));
+
+        courseInstructorTable.setModel(new javax.swing.table.DefaultTableModel(
+            new Object [][] {
+                {null, null, null, null},
+                {null, null, null, null},
+                {null, null, null, null},
+                {null, null, null, null}
+            },
+            new String [] {
+                "CourseID", "Title", "PersonID", "FirstName"
+            }
+        ));
+        courseInstructorTable.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                courseInstructorTableMouseClicked(evt);
+            }
+        });
+        jScrollPane3.setViewportView(courseInstructorTable);
+
+        javax.swing.GroupLayout jPanel5Layout = new javax.swing.GroupLayout(jPanel5);
+        jPanel5.setLayout(jPanel5Layout);
+        jPanel5Layout.setHorizontalGroup(
+            jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addComponent(jScrollPane3, javax.swing.GroupLayout.DEFAULT_SIZE, 793, Short.MAX_VALUE)
+        );
+        jPanel5Layout.setVerticalGroup(
+            jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel5Layout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(jScrollPane3, javax.swing.GroupLayout.DEFAULT_SIZE, 561, Short.MAX_VALUE)
+                .addContainerGap())
+        );
+
+        courseIdCombobox.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                courseIdComboboxActionPerformed(evt);
+            }
+        });
+
+        searchBtn.setText("Search");
+        searchBtn.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                searchBtnActionPerformed(evt);
+            }
+        });
+
+        reloadBtn.setText("Reload");
+        reloadBtn.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                reloadBtnActionPerformed(evt);
+            }
+        });
+
+        addCourseInstructorCombobox.setText("Add");
+        addCourseInstructorCombobox.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                addCourseInstructorComboboxActionPerformed(evt);
+            }
+        });
+
+        javax.swing.GroupLayout jPanel4Layout = new javax.swing.GroupLayout(jPanel4);
+        jPanel4.setLayout(jPanel4Layout);
+        jPanel4Layout.setHorizontalGroup(
+            jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel4Layout.createSequentialGroup()
+                .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                        .addComponent(courseIdCombobox, 0, 282, Short.MAX_VALUE)
+                        .addComponent(personIdCombobox, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                    .addGroup(jPanel4Layout.createSequentialGroup()
+                        .addGap(87, 87, 87)
+                        .addComponent(addCourseInstructorCombobox)))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 50, Short.MAX_VALUE)
+                .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(jPanel5, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addGroup(jPanel4Layout.createSequentialGroup()
+                        .addComponent(inputSearchTextField, javax.swing.GroupLayout.PREFERRED_SIZE, 241, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(29, 29, 29)
+                        .addComponent(searchBtn)
+                        .addGap(27, 27, 27)
+                        .addComponent(reloadBtn))))
+        );
+        jPanel4Layout.setVerticalGroup(
+            jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel4Layout.createSequentialGroup()
+                .addGap(0, 10, Short.MAX_VALUE)
+                .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(inputSearchTextField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(searchBtn)
+                    .addComponent(reloadBtn))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(jPanel4Layout.createSequentialGroup()
+                        .addComponent(courseIdCombobox, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(29, 29, 29)
+                        .addComponent(personIdCombobox, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(26, 26, 26)
+                        .addComponent(addCourseInstructorCombobox))
+                    .addComponent(jPanel5, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
+        );
+
         javax.swing.GroupLayout jPanel2Layout = new javax.swing.GroupLayout(jPanel2);
         jPanel2.setLayout(jPanel2Layout);
         jPanel2Layout.setHorizontalGroup(
             jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 1149, Short.MAX_VALUE)
+            .addComponent(jPanel4, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
         );
         jPanel2Layout.setVerticalGroup(
             jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 648, Short.MAX_VALUE)
+            .addComponent(jPanel4, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
         );
 
         jTabbedPane1.addTab("Phân công giảng dạy", jPanel2);
@@ -388,7 +642,7 @@ public class HomeGUI extends javax.swing.JFrame {
         jPanel3.setLayout(jPanel3Layout);
         jPanel3Layout.setHorizontalGroup(
             jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 1149, Short.MAX_VALUE)
+            .addGap(0, 1137, Short.MAX_VALUE)
         );
         jPanel3Layout.setVerticalGroup(
             jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -401,7 +655,10 @@ public class HomeGUI extends javax.swing.JFrame {
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(jTabbedPane1)
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(jTabbedPane1)
+                .addContainerGap())
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -446,6 +703,58 @@ public class HomeGUI extends javax.swing.JFrame {
         // TODO add your handling code here:
     }//GEN-LAST:event_jButton1ActionPerformed
 
+    private void courseInstructorTableMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_courseInstructorTableMouseClicked
+        if (SwingUtilities.isRightMouseButton(evt)) {
+            int row = courseInstructorTable.rowAtPoint(evt.getPoint());
+            courseInstructorTable.getSelectionModel().setSelectionInterval(row, row);
+            jPopupMenu.show(courseInstructorTable, evt.getX(), evt.getY());
+        }
+    }//GEN-LAST:event_courseInstructorTableMouseClicked
+
+    private void courseIdComboboxActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_courseIdComboboxActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_courseIdComboboxActionPerformed
+
+    private void addCourseInstructorComboboxActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_addCourseInstructorComboboxActionPerformed
+        try {
+            String stringValue1 = (String) courseIdCombobox.getSelectedItem();
+            String[] parts1 = stringValue1.split(" - ");
+            String CourseId = parts1[0];
+            int value1 = Integer.parseInt(CourseId);
+
+            String stringValue2 = (String) personIdCombobox.getSelectedItem();
+            String[] parts2 = stringValue2.split(" - ");
+            String PersonId = parts2[0];
+            int value2 = Integer.parseInt(PersonId);
+
+            courseInstructorDto = new CourseInstructorDTO();
+
+            courseInstructorDto.setCourseID(value1);
+            courseInstructorDto.setPersonID(value2);
+
+            int rs = courseInstructor.insertCourseInstructor(courseInstructorDto);
+            if (rs == 1) {
+                JOptionPane.showMessageDialog(null, "Insert successful!", "Success", JOptionPane.INFORMATION_MESSAGE);
+                loadCourseInstructor();
+                loadCourseIdInCombobox();
+                loadPersonIdInCombobox();
+            } else {
+                JOptionPane.showMessageDialog(null, "Insert failed!", "Error", JOptionPane.ERROR_MESSAGE);
+            }
+        } catch (NumberFormatException e) {
+            JOptionPane.showMessageDialog(null, "Invalid input! Please select valid integers.", "Error", JOptionPane.ERROR_MESSAGE);
+        }
+    }//GEN-LAST:event_addCourseInstructorComboboxActionPerformed
+
+    private void reloadBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_reloadBtnActionPerformed
+        loadCourseInstructor();
+    }//GEN-LAST:event_reloadBtnActionPerformed
+
+    private void searchBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_searchBtnActionPerformed
+        String valueInput = (String) inputSearchTextField.getText();
+        loadSearchCourseInstructor(valueInput);
+    }//GEN-LAST:event_searchBtnActionPerformed
+
     /**
      * @param args the command line arguments
      */
@@ -482,6 +791,10 @@ public class HomeGUI extends javax.swing.JFrame {
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JButton addCourseInstructorCombobox;
+    private javax.swing.JComboBox<String> courseIdCombobox;
+    private javax.swing.JTable courseInstructorTable;
+    private javax.swing.JTextField inputSearchTextField;
     private javax.swing.JButton jButton1;
     private javax.swing.JButton jButton2;
     private javax.swing.JButton jButton3;
@@ -493,10 +806,16 @@ public class HomeGUI extends javax.swing.JFrame {
     private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanel2;
     private javax.swing.JPanel jPanel3;
+    private javax.swing.JPanel jPanel4;
+    private javax.swing.JPanel jPanel5;
     private javax.swing.JPanel jPanel7;
     private javax.swing.JScrollPane jScrollPane1;
+    private javax.swing.JScrollPane jScrollPane3;
     private javax.swing.JTabbedPane jTabbedPane1;
     private javax.swing.JTable jTable1;
     private javax.swing.JTextField jTextField5;
+    private javax.swing.JComboBox<String> personIdCombobox;
+    private javax.swing.JButton reloadBtn;
+    private javax.swing.JButton searchBtn;
     // End of variables declaration//GEN-END:variables
 }

@@ -237,4 +237,81 @@ public class CourseDAL {
         }
         return null;
     }
+    
+    public String getTitleById(int Id) {
+        String title = "";
+        Connection con = null;
+        try {
+            con = MyConnection.connect();
+            String sql = "SELECT Title FROM Course WHERE CourseID = ?";
+            PreparedStatement st = con.prepareStatement(sql);
+            st.setInt(1, Id); // Set the CourseID parameter
+            ResultSet rs = st.executeQuery();
+            if(rs.next()) {
+                title = rs.getString("Title");
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            MyConnection.close(con);
+        }
+        return title;
+    }
+    
+    public String getCourseTypeById(int Id) {
+        String courseType = ""; 
+        Connection con = null;
+        try {
+            con = MyConnection.connect();
+            String sql = "SELECT \n" +
+            "    CASE \n" +
+            "        WHEN EXISTS (SELECT 1 FROM OnlineCourse WHERE CourseID = ?) \n" +
+            "        THEN 'OnlineCourse'\n" +
+            "        ELSE 'OnsiteCourse' \n" +
+            "    END AS CourseType;";
+            PreparedStatement st = con.prepareStatement(sql);
+            st.setInt(1, Id); // Set the CourseID parameter
+            ResultSet rs = st.executeQuery();
+            if(rs.next()) {
+                courseType = rs.getString("CourseType");
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            MyConnection.close(con);
+        }
+        return courseType;
+    }
+    
+    public int[] getAllCourseId() {
+        int[] courseId = new int[0];
+        Connection con = null;
+        try {
+            con = MyConnection.connect();
+            String sql = "SELECT * FROM course\n" +
+            "LEFT JOIN onsitecourse ON course.CourseID = onsitecourse.CourseID\n" +
+            "LEFT JOIN onlinecourse ON course.CourseID = onlinecourse.CourseID\n" +
+            "LEFT JOIN courseinstructor ON courseinstructor.CourseID=course.CourseID\n" +
+            "WHERE courseinstructor.CourseID IS null";
+            PreparedStatement st = con.prepareStatement(sql);
+            ResultSet rs = st.executeQuery();
+
+            ArrayList<Integer> courseIdList = new ArrayList<>(); 
+
+            while (rs.next()) {
+                courseIdList.add(rs.getInt("CourseID")); 
+            }
+
+            courseId = new int[courseIdList.size()];
+            for (int i = 0; i < courseIdList.size(); i++) {
+                courseId[i] = courseIdList.get(i);
+            }
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            MyConnection.close(con);
+        }
+        return courseId;
+    }
 }

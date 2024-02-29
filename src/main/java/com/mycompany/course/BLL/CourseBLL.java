@@ -35,4 +35,13 @@ public class CourseBLL {
      public ArrayList<CourseDTO> searchCourseByTitle(String Title){
          return dal.findCoursesByTitle(Title);
      }
+    public String getTitleById(int Id) {
+        return dal.getTitleById(Id);
+    }
+    public String getCourseTypeById(int Id) {
+        return dal.getCourseTypeById(Id);
+    }
+    public int[] getAllCourseId() {
+        return dal.getAllCourseId();
+    }
 }
