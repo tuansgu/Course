@@ -98,7 +98,7 @@ public class DetailCourseSiteDig extends javax.swing.JDialog {
 
         jLabel5.setText("Location:");
 
-        jButton1.setText("Edit");
+        jButton1.setText("Exit");
         jButton1.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 jButton1ActionPerformed(evt);

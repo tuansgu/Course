@@ -22,9 +22,6 @@ public class OnLineCourseBLL {
     }
     // boolean courseupdate = coursebll.updateCourse(dto);
 
-    public boolean updateCourseOnline(OnLineCourseDTO dto) {
-        return dal.updateCourseOnline(dto);
-    }
 
     public boolean updateOnline(OnLineCourseDTO dto) {
         boolean courseupdate = coursebll.updateCourse(dto);

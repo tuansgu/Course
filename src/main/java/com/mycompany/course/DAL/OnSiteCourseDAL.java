@@ -64,14 +64,15 @@ public class OnSiteCourseDAL {
         Connection con = null;
         try {
             con = MyConnection.connect();
-            String sql = "UPDATE onlinecourse SET Location=?,Days=?,Time=? WHERE CourseID=? ";
+            String sql = "UPDATE onsitecourse SET Location=?,Days=?,Time=? WHERE CourseID=? ";
             PreparedStatement st = con.prepareStatement(sql);
             st.setString(1, dto.getLocation());
             st.setString(2, dto.getDays());
             st.setTime(3, dto.getTime());
             st.setInt(4, dto.getCourseID());
             result = st.execute();
-            System.err.println(result);
+            
+            System.err.println("heloresult:"+result);
         } catch (Exception e) {
             e.printStackTrace();
         } finally {

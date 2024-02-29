@@ -99,6 +99,7 @@ public class HomeGUI extends javax.swing.JFrame {
                         editOnline.setVisible(true);
                     } else if (coursedto instanceof OnSiteCourseDTO) {
                         EditCourseSiteDig editOnsite = new EditCourseSiteDig(new HomeGUI(), true);
+                        editOnsite.setCourseId(courseID);
                         editOnsite.setCourseOnsite(coursedto.getTitle(),
                                 coursedto.getCredits(),
                                 ((OnSiteCourseDTO) coursedto).getLocation(),

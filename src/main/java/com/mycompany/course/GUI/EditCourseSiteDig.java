@@ -111,7 +111,9 @@ public class EditCourseSiteDig extends javax.swing.JDialog {
 
         SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
         String days = dateFormat.format(selectedDate);
+        
         String location = (String) jComboBox4.getSelectedItem();
+        System.err.println("hello: "+location);
         if (location == null || location.equals("0-selected location")) {
             JOptionPane.showMessageDialog(this, "Please select a department", "Error", JOptionPane.ERROR_MESSAGE);
             return;
@@ -134,8 +136,9 @@ public class EditCourseSiteDig extends javax.swing.JDialog {
             ((OnSiteCourseDTO) dto).setLocation(location);
             ((OnSiteCourseDTO) dto).setDays(days);
             ((OnSiteCourseDTO) dto).setTime(time);
-            if (onsiteCourseBLL.updateCourseOnline((OnSiteCourseDTO) dto) == false) {
+            if (onsiteCourseBLL.updateOnsite((OnSiteCourseDTO) dto) == false) {
                 JOptionPane.showMessageDialog(this, "Onsite course edit successfully");
+                this.dispose();
             } else {
                 JOptionPane.showMessageDialog(this, "Failed to edit onsite course", "Error", JOptionPane.ERROR_MESSAGE);
             }
@@ -228,6 +231,12 @@ public class EditCourseSiteDig extends javax.swing.JDialog {
 
         jLabel3.setText("Departments:");
 
+        jComboBox1.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jComboBox1ActionPerformed(evt);
+            }
+        });
+
         jLabel4.setFont(new java.awt.Font("sansserif", 0, 14)); // NOI18N
         jLabel4.setText("Edit Course Onsite");
 
@@ -261,6 +270,12 @@ public class EditCourseSiteDig extends javax.swing.JDialog {
         });
 
         jLabel9.setText("mm");
+
+        jComboBox4.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jComboBox4ActionPerformed(evt);
+            }
+        });
 
         jButton2.setText("Exit");
         jButton2.addActionListener(new java.awt.event.ActionListener() {
@@ -369,6 +384,14 @@ public class EditCourseSiteDig extends javax.swing.JDialog {
     private void jButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton2ActionPerformed
        this.dispose();
     }//GEN-LAST:event_jButton2ActionPerformed
+
+    private void jComboBox4ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jComboBox4ActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_jComboBox4ActionPerformed
+
+    private void jComboBox1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jComboBox1ActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_jComboBox1ActionPerformed
 
     /**
      * @param args the command line arguments

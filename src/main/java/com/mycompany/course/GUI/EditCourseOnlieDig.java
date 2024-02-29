@@ -103,12 +103,11 @@ public class EditCourseOnlieDig extends javax.swing.JDialog {
         dto.setTitle(title);
         dto.setCredits(credit);
         dto.setDepartmentID(departmentID);
-       // onlineCourseBLL.updateCourseOnline((OnLineCourseDTO) dto)
         if (dto instanceof OnLineCourseDTO) {
             ((OnLineCourseDTO) dto).setUrl(url);
-           
             if(onlineCourseBLL.updateOnline((OnLineCourseDTO) dto)==false){
                 JOptionPane.showMessageDialog(this, "Online course edit successfully");
+                this.dispose();
             }else{
                 JOptionPane.showMessageDialog(this, "Failed to edit online course", "Error", JOptionPane.ERROR_MESSAGE);
             }

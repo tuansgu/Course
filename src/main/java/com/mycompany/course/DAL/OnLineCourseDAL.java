@@ -74,7 +74,7 @@ public class OnLineCourseDAL {
             st.setString(1, dto.getUrl());
             st.setInt(2, dto.getCourseID());
             result = st.execute();
-            System.err.println(result);
+           
         } catch (Exception e) {
             e.printStackTrace();
         } finally {

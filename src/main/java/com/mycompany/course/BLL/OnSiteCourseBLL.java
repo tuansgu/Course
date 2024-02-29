@@ -21,11 +21,6 @@ public class OnSiteCourseBLL {
     public boolean insertCourseOnSite(OnSiteCourseDTO dto) {
         return dal.insertCourseOnsite(dto);
     }
-
-    public boolean updateCourseOnline(OnSiteCourseDTO dto) {
-        return dal.updateCourseOnsite(dto);
-    }
-
     public boolean updateOnsite(OnSiteCourseDTO dto) {
         boolean courseupdate = coursebll.updateCourse(dto);
         boolean onsiteupdate = dal.updateCourseOnsite(dto);
@@ -34,7 +29,6 @@ public class OnSiteCourseBLL {
         }
         return false;
     }
-
     public int deleteCourseOnsite(OnSiteCourseDTO dto) {
         if (coursebll.deleteCourse(dto) > 0 && dal.deleteCourseOnsite(dto)>0) {
             return 1;
